@@ -1,7 +1,11 @@
 apply plugin: 'groovy'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+project.group = 'org.almibe'
+project.version = '0.0.1-SNAPSHOT'
 
 dependencies {
     compile gradleApi()
