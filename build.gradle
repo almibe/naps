@@ -7,7 +7,13 @@ targetCompatibility = 1.8
 project.group = 'org.almibe'
 project.version = '0.0.1-SNAPSHOT'
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
+    compile 'org.mvel:mvel2:2.2.2.Final'
+    compile 'org.pegdown:pegdown:1.4.2'
 }
