@@ -19,5 +19,11 @@ public class NapsPlugin implements Plugin<Project> {
         project.task("processTemplates", type:ProcessTemplatesTask, dependsOn:':processFragments') {
             group = 'naps'
         }
+        project.task("processResources", type:ProcessResourcesTask) {
+            group = 'naps'
+        }
+        project.task("naps", type:NapsTask, dependsOn:[':processFragments', ':processResources', ':processTemplates']) {
+            group = 'naps'
+        }
     }
 }
