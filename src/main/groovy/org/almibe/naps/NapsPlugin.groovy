@@ -1,7 +1,11 @@
-package org.almibe.naps;
+package org.almibe.naps
 
+import org.almibe.naps.tasks.NapsTask
+import org.almibe.naps.tasks.ProcessFragmentsTask
+import org.almibe.naps.tasks.ProcessTemplatesTask;
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 
 public class NapsPlugin implements Plugin<Project> {
     @Override
@@ -17,8 +21,9 @@ public class NapsPlugin implements Plugin<Project> {
         project.task("processTemplates", type:ProcessTemplatesTask, dependsOn:':processFragments') {
             group = 'naps'
         }
-        project.task("processResources", type:ProcessResourcesTask) {
-            group = 'naps'
+        project.task("processResources", type:Copy) {
+            from("$project.naps.resourcesIn")
+            into "$project.buildDir/$project.naps.siteOut"
         }
         project.task("naps", type:NapsTask, dependsOn:[':processFragments', ':processResources', ':processTemplates']) {
             group = 'naps'
