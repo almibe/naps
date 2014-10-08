@@ -10,7 +10,9 @@ import org.gradle.api.tasks.Copy
 public class NapsPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-        project.extensions.create("naps", NapsExtension)
+        def handlers = project.container(NapsHandler)
+
+        project.extensions.create("naps", NapsExtension, handlers)
         /*
          * TODO
          * http://www.gradle.org/docs/current/userguide/more_about_tasks.html#sec:up_to_date_checks
