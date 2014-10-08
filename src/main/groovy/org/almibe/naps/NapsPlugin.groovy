@@ -15,18 +15,13 @@ public class NapsPlugin implements Plugin<Project> {
          * TODO
          * http://www.gradle.org/docs/current/userguide/more_about_tasks.html#sec:up_to_date_checks
         */
-        project.task("processFragments", type:ProcessFragmentsTask) {
-            group = 'naps'
-        }
-        project.task("processTemplates", type:ProcessTemplatesTask, dependsOn:':processFragments') {
-            group = 'naps'
-        }
-        project.task("processResources", type:Copy) {
+        project.task("processFragments", type:ProcessFragmentsTask, group:'naps')
+        project.task("processTemplates", type:ProcessTemplatesTask, dependsOn:':processFragments', group:'naps')
+        project.task("processResources", type:Copy, group:'naps') {
             from("$project.naps.resourcesIn")
             into "$project.buildDir/$project.naps.siteOut"
         }
-        project.task("naps", type:NapsTask, dependsOn:[':processFragments', ':processResources', ':processTemplates']) {
-            group = 'naps'
-        }
+        project.task("naps", type:NapsTask, dependsOn:[':processFragments', ':processResources', ':processTemplates'],
+            group:'naps')
     }
 }
