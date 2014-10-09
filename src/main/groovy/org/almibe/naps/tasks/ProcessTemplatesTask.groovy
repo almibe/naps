@@ -2,6 +2,7 @@ package org.almibe.naps.tasks
 
 import freemarker.template.Configuration
 import freemarker.template.DefaultObjectWrapper
+import freemarker.template.ObjectWrapper
 import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import freemarker.template.Version
@@ -11,11 +12,21 @@ import org.gradle.api.tasks.TaskAction
 class ProcessTemplatesTask extends DefaultTask {
     TemplateProcessor templateProcessor = new TemplateProcessor()
 
+    String defaultTemplate
+    def globalVariables
+    def globalFragments
+
     @TaskAction
     def processTemplates() {
-        println(project.extensions.naps.defaultTemplate)
+        defaultTemplate = project.extensions.naps.defaultTemplate
+        globalVariables = project.extensions.naps.globalVariables
+        globalFragments = project.extensions.naps.globalFragments
+
         for(def handler : project.extensions.naps.handlers) {
-            //templateProcessor.processTemplate(handler.template, ) //this is a mess start from scratch
+            //figure out what template and variables to use
+            def finalTemplate = 'index.html'
+            def finalVariables = ['title':"This is the title", "mainContent":'This is the main content!']
+            templateProcessor.processTemplate(finalTemplate, finalVariables)
         }
     }
 
@@ -40,11 +51,12 @@ class ProcessTemplatesTask extends DefaultTask {
             cfg.setIncompatibleImprovements(new Version(2, 3, 20));  // FreeMarker 2.3.20
         }
 
-        def processTemplate(String templateName, def dataModel, String output) {
-//            Template template = cfg.getTemplate(templateName)
-//            Writer writer = new OutputStreamWriter(new FileOutputStream(project.file(output)))
-//            template.process(dataModel, writer)
-//            writer.close()
+        def processTemplate(String templateName, def dataModel) { //, String output) {
+            Template template = cfg.getTemplate(templateName)
+            Writer writer = new OutputStreamWriter(new FileOutputStream(project.file(output)))
+            //Writer writer = new OutputStreamWriter(System.out);
+            template.process(dataModel, writer)
+            writer.close()
         }
     }
 
