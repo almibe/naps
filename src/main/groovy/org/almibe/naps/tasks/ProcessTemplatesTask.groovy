@@ -2,12 +2,16 @@ package org.almibe.naps.tasks
 
 import freemarker.template.Configuration
 import freemarker.template.DefaultObjectWrapper
-import freemarker.template.ObjectWrapper
 import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
+import freemarker.template.TemplateHashModel
+import freemarker.template.TemplateModel
+import freemarker.template.TemplateModelException
 import freemarker.template.Version
+import org.almibe.naps.NapsHandler
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import  freemarker.template.SimpleScalar
 
 class ProcessTemplatesTask extends DefaultTask {
     TemplateProcessor templateProcessor = new TemplateProcessor()
@@ -22,11 +26,9 @@ class ProcessTemplatesTask extends DefaultTask {
         globalVariables = project.extensions.naps.globalVariables
         globalFragments = project.extensions.naps.globalFragments
 
-        for(def handler : project.extensions.naps.handlers) {
-            //figure out what template and variables to use
-            def finalTemplate = 'index.html'
-            def finalVariables = ['title':"This is the title", "mainContent":'This is the main content!']
-            templateProcessor.processTemplate(finalTemplate, finalVariables)
+        for(NapsHandler handler : project.extensions.naps.handlers) {
+            def finalTemplate = handler.template.trim() ?: defaultTemplate
+            templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(handler: handler))
         }
     }
 
@@ -53,11 +55,42 @@ class ProcessTemplatesTask extends DefaultTask {
 
         def processTemplate(String templateName, def dataModel) { //, String output) {
             Template template = cfg.getTemplate(templateName)
-            Writer writer = new OutputStreamWriter(new FileOutputStream(project.file(output)))
-            //Writer writer = new OutputStreamWriter(System.out);
+            //Writer writer = new OutputStreamWriter(new FileOutputStream(project.file(output)))
+            Writer writer = new OutputStreamWriter(System.out);
             template.process(dataModel, writer)
             writer.close()
         }
     }
 
+    class NapsTemplateHashModel implements TemplateHashModel {
+        NapsHandler handler
+
+        @Override
+        TemplateModel get(String key) throws TemplateModelException {
+            String returnValue = '';
+            if(false) {
+                //TODO support computerContent
+            } else if(key == 'mainContent' && handler.mainContent.trim()) {
+                returnValue = handler.mainContent.trim()
+            } else if(false) {
+                //TODO support properties files
+            } else if (handler.fragments.containsKey(key)) {
+                //TODO complete
+            } else if(handler.variables.containsKey(key)) {
+                returnValue = handler.variables[key]
+            } else if(globalFragments.containsKey(key)) {
+                //TODO suppport fragments
+            } else if(globalVariables.containsKey(key)) {
+                returnValue = globalVariables[key]
+            } else {
+                throw new RuntimeException("Value not found $key")
+            }
+            return new SimpleScalar(returnValue)
+        }
+
+        @Override
+        boolean isEmpty() throws TemplateModelException {
+            return false
+        }
+    }
 }
