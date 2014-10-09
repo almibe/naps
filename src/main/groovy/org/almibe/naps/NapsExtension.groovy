@@ -6,11 +6,12 @@ class NapsExtension {
     String fragmentsIn = "src/naps/fragments"
     String fragmentsOut = "naps/fragments"
     String resourcesIn = "src/naps/resources"
-    String templatesIn = "naps/templates"
+    String templatesIn = "src/naps/templates"
     String siteOut = "naps/site"
 
     String defaultTemplate = ''
     def globalVariables = [:]
+    def globalFragments = [:]
 
     final NamedDomainObjectContainer<NapsHandler> handlers
 
@@ -21,13 +22,19 @@ class NapsExtension {
     def handlers(Closure closure) {
         handlers.configure(closure)
     }
+
+    def test() {
+        println("test")
+    }
 }
 
 class NapsHandler {
     def name
-    def template
     def mainContent
+    def template
     def finalLocation
+    def variables = [:]
+    def fragments = [:]
 
     NapsHandler(String name) {
         this.name = name
