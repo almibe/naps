@@ -27,8 +27,8 @@ class ProcessTemplatesTask extends DefaultTask {
         globalFragments = project.extensions.naps.globalFragments
 
         for(NapsHandler handler : project.extensions.naps.handlers) {
-            def finalTemplate = handler.template.trim() ?: defaultTemplate
-            templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(handler: handler))
+            def finalTemplate = handler.template?.trim() ?: defaultTemplate
+            templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(handler))
         }
     }
 
@@ -58,26 +58,28 @@ class ProcessTemplatesTask extends DefaultTask {
             //Writer writer = new OutputStreamWriter(new FileOutputStream(project.file(output)))
             Writer writer = new OutputStreamWriter(System.out);
             template.process(dataModel, writer)
-            writer.close()
         }
     }
 
     class NapsTemplateHashModel implements TemplateHashModel {
-        NapsHandler handler
+        NapsHandler napsHandler
+        public NapsTemplateHashModel(NapsHandler handler) {
+            napsHandler = handler
+        }
 
         @Override
         TemplateModel get(String key) throws TemplateModelException {
             String returnValue = '';
             if(false) {
                 //TODO support computerContent
-            } else if(key == 'mainContent' && handler.mainContent.trim()) {
-                returnValue = handler.mainContent.trim()
+            } else if(key == 'mainContent' && napsHandler.mainContent?.trim()) {
+                returnValue = napsHandler.mainContent.trim()
             } else if(false) {
                 //TODO support properties files
-            } else if (handler.fragments.containsKey(key)) {
+            } else if (napsHandler.fragments.containsKey(key)) {
                 //TODO complete
-            } else if(handler.variables.containsKey(key)) {
-                returnValue = handler.variables[key]
+            } else if(napsHandler.variables.containsKey(key)) {
+                returnValue = napsHandler.variables[key]
             } else if(globalFragments.containsKey(key)) {
                 //TODO suppport fragments
             } else if(globalVariables.containsKey(key)) {
