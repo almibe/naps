@@ -71,7 +71,7 @@ class ProcessTemplatesTask extends DefaultTask {
         TemplateModel get(String key) throws TemplateModelException {
             String returnValue = '';
             if(false) {
-                //TODO support computerContent
+                //TODO support computedContent
             } else if(key == 'mainContent' && napsHandler.mainContent?.trim()) {
                 returnValue = napsHandler.mainContent.trim()
             } else if(false) {
@@ -85,7 +85,7 @@ class ProcessTemplatesTask extends DefaultTask {
             } else if(globalVariables.containsKey(key)) {
                 returnValue = globalVariables[key]
             } else {
-                throw new RuntimeException("Value not found $key")
+                throw new RuntimeException("Value not found: $key")
             }
             return new SimpleScalar(returnValue)
         }
