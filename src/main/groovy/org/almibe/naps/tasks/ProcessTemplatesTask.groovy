@@ -8,6 +8,7 @@ import freemarker.template.TemplateHashModel
 import freemarker.template.TemplateModel
 import freemarker.template.TemplateModelException
 import freemarker.template.Version
+import javafx.util.Callback
 import org.almibe.naps.NapsHandler
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -16,6 +17,7 @@ import  freemarker.template.SimpleScalar
 class ProcessTemplatesTask extends DefaultTask {
     TemplateProcessor templateProcessor = new TemplateProcessor()
 
+    final String outputLocation = "$project.buildDir/$project.naps.siteOut"
     String defaultTemplate
     def globalVariables
     def globalFragments
@@ -28,7 +30,31 @@ class ProcessTemplatesTask extends DefaultTask {
 
         for(NapsHandler handler : project.extensions.naps.handlers) {
             def finalTemplate = handler.template?.trim() ?: defaultTemplate
-            templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(handler))
+            templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(handler), "$outputLocation/${computeFileLocation(handler)}${computeFileName(handler)}")
+        }
+    }
+
+    /**
+     *
+     */
+    String computeFileLocation(NapsHandler handler) {
+        if(handler.finalLocation instanceof String && handler.finalLocation.trim()) {
+            return "$handler.finalLocation/"
+        }
+    }
+
+    /**
+     * Creates the name for the file about to be output.  By default it's just the name of the main content but it can
+     * be over written by setting the final name property as either a String or a closure that accepts the mainContent
+     * value and returns the name.
+     */
+    String computeFileName(NapsHandler handler) {
+        if (handler.finalName instanceof String) {
+            return handler.finalName
+        } else if (handler.finalName instanceof Closure) {
+            return handler.finalName(handler.mainContent)
+        } else {
+            return handler.mainContent
         }
     }
 
@@ -53,11 +79,12 @@ class ProcessTemplatesTask extends DefaultTask {
             cfg.setIncompatibleImprovements(new Version(2, 3, 20));  // FreeMarker 2.3.20
         }
 
-        def processTemplate(String templateName, def dataModel) { //, String output) {
+        def processTemplate(String templateName, def dataModel, String output) {
             Template template = cfg.getTemplate(templateName)
-            //Writer writer = new OutputStreamWriter(new FileOutputStream(project.file(output)))
-            Writer writer = new OutputStreamWriter(System.out);
+            OutputStream os = new FileOutputStream(project.file(output))
+            Writer writer = new OutputStreamWriter(os)
             template.process(dataModel, writer)
+            os.close()
         }
     }
 

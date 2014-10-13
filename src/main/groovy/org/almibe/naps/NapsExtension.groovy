@@ -8,7 +8,6 @@ class NapsExtension {
     String resourcesIn = "src/naps/resources"
     String templatesIn = "src/naps/templates"
     String siteOut = "naps/site"
-
     String defaultTemplate = ''
     def globalVariables = [:]
     def globalFragments = [:]
