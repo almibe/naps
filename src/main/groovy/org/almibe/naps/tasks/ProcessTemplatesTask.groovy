@@ -8,7 +8,6 @@ import freemarker.template.TemplateHashModel
 import freemarker.template.TemplateModel
 import freemarker.template.TemplateModelException
 import freemarker.template.Version
-import javafx.util.Callback
 import org.almibe.naps.NapsHandler
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
