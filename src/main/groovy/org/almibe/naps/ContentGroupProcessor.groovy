@@ -1,14 +1,13 @@
 package org.almibe.naps
 
-class NapsHandler {
+class ContentGroupProcessor {
     def name
     def mainContent
     def template
-    def finalLocation
     def variables = [:]
     def fragments = [:]
 
-    NapsHandler(String name) {
+    ContentGroupProcessor(String name) {
         this.name = name
     }
 }

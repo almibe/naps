@@ -8,7 +8,7 @@ import freemarker.template.TemplateHashModel
 import freemarker.template.TemplateModel
 import freemarker.template.TemplateModelException
 import freemarker.template.Version
-import org.almibe.naps.NapsHandler
+import org.almibe.naps.ContentGroupProcessor
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import  freemarker.template.SimpleScalar
@@ -27,16 +27,16 @@ class NapsTask extends DefaultTask {
         globalVariables = project.extensions.naps.globalVariables
         globalFragments = project.extensions.naps.globalFragments
 
-        for(NapsHandler handler : project.extensions.naps.handlers) {
-            def finalTemplate = handler.template?.trim() ?: defaultTemplate
-            templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(handler), "$outputLocation/${computeFileLocation(handler)}${computeFileName(handler)}")
+        for(ContentGroupProcessor contentGroup : project.extensions.naps.contentGroups) {
+            def finalTemplate = contentGroup.template?.trim() ?: defaultTemplate
+            templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(contentGroup), "$outputLocation/${computeFileLocation(contentGroup)}${computeFileName(contentGroup)}")
         }
     }
 
     /**
      *
      */
-    String computeFileLocation(NapsHandler handler) {
+    String computeFileLocation(ContentGroupProcessor handler) {
         if(handler.finalLocation instanceof String && handler.finalLocation.trim()) {
             return "$handler.finalLocation/"
         }
@@ -47,7 +47,7 @@ class NapsTask extends DefaultTask {
      * be over written by setting the final name property as either a String or a closure that accepts the mainContent
      * value and returns the name.
      */
-    String computeFileName(NapsHandler handler) {
+    String computeFileName(ContentGroupProcessor handler) {
         if (handler.finalName instanceof String) {
             return handler.finalName
         } else if (handler.finalName instanceof Closure) {
@@ -88,8 +88,8 @@ class NapsTask extends DefaultTask {
     }
 
     class NapsTemplateHashModel implements TemplateHashModel {
-        NapsHandler napsHandler
-        public NapsTemplateHashModel(NapsHandler handler) {
+        ContentGroupProcessor napsHandler
+        public NapsTemplateHashModel(ContentGroupProcessor handler) {
             napsHandler = handler
         }
 

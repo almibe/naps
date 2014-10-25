@@ -7,8 +7,8 @@ import org.gradle.api.tasks.Copy
 public class NapsPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-        def handlers = project.container(NapsHandler)
-        project.extensions.create("naps", NapsExtension, handlers)
+        def contentGroups = project.container(ContentGroupProcessor)
+        project.extensions.create("naps", NapsExtension, contentGroups)
 
         /*
          * TODO

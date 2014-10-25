@@ -11,14 +11,14 @@ class NapsExtension {
     def globalVariables = [:]
     def globalFragments = [:]
 
-    final NamedDomainObjectContainer<NapsHandler> handlers
+    final NamedDomainObjectContainer<ContentGroupProcessor> contentGroups
 
     NapsExtension(handlers) {
-        this.handlers = handlers
+        this.contentGroups = handlers
     }
 
-    def handlers(Closure closure) {
-        handlers.configure(closure)
+    def contentGroups(Closure closure) {
+        contentGroups.configure(closure)
     }
 
     def test() {
