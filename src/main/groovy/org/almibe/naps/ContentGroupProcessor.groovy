@@ -19,10 +19,10 @@ class ContentGroupProcessor {
         NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this)
         def finalTemplate = template?.trim() ?: napsExtension.defaultTemplate
         if (mainContent instanceof String) {
-            templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$napsExtension.siteOut/$mainContent"))
+            templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$napsExtension.siteOut/$mainContent"))
         } else {
             ((List<String>)mainContent).forEach {
-                templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$napsExtension.siteOut/$mainContent"))
+                templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$napsExtension.siteOut/$mainContent"))
             }
         }
     }

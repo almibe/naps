@@ -33,6 +33,8 @@ class TemplateProcessor {
     }
 
     def processTemplate(String templateName, def dataModel, File output) {
+        File parent = output.getParentFile() //TODO add more checking here
+        parent.mkdirs()
         Template template = cfg.getTemplate(templateName)
         OutputStream os = new FileOutputStream(output)
         Writer writer = new OutputStreamWriter(os)
