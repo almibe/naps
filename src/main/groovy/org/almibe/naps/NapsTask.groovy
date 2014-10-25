@@ -1,4 +1,4 @@
-package org.almibe.naps.tasks
+package org.almibe.naps
 
 import freemarker.template.Configuration
 import freemarker.template.DefaultObjectWrapper
@@ -13,7 +13,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import  freemarker.template.SimpleScalar
 
-class ProcessTemplatesTask extends DefaultTask {
+class NapsTask extends DefaultTask {
     TemplateProcessor templateProcessor = new TemplateProcessor()
 
     final String outputLocation = "$project.buildDir/$project.naps.siteOut"
@@ -22,7 +22,7 @@ class ProcessTemplatesTask extends DefaultTask {
     def globalFragments
 
     @TaskAction
-    def processTemplates() {
+    def naps() {
         defaultTemplate = project.extensions.naps.defaultTemplate
         globalVariables = project.extensions.naps.globalVariables
         globalFragments = project.extensions.naps.globalFragments

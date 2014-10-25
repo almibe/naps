@@ -1,4 +1,4 @@
-package org.almibe.naps.tasks
+package org.almibe.naps
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction

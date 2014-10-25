@@ -4,7 +4,6 @@ import org.gradle.api.NamedDomainObjectContainer
 
 class NapsExtension {
     String fragmentsIn = "src/naps/fragments"
-    String fragmentsOut = "naps/fragments"
     String resourcesIn = "src/naps/resources"
     String templatesIn = "src/naps/templates"
     String siteOut = "naps/site"
@@ -27,15 +26,3 @@ class NapsExtension {
     }
 }
 
-class NapsHandler {
-    def name
-    def mainContent
-    def template
-    def finalLocation
-    def variables = [:]
-    def fragments = [:]
-
-    NapsHandler(String name) {
-        this.name = name
-    }
-}
