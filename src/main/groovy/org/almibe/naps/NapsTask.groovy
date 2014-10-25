@@ -10,9 +10,10 @@ class NapsTask extends DefaultTask {
     @TaskAction
     def naps() {
         NapsExtension napsExtension = project.extensions.naps
+        MarkdownProcessor markdownProcessor = new MarkdownProcessor(project.naps.fragmentsIn)
 
         for(ContentGroupProcessor contentGroup : project.extensions.naps.contentGroups) {
-            contentGroup.process(templateProcessor, napsExtension, project)
+            contentGroup.process(templateProcessor, napsExtension, project, markdownProcessor)
         }
     }
 }
