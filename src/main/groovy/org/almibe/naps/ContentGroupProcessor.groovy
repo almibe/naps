@@ -15,8 +15,9 @@ class ContentGroupProcessor {
         this.name = name
     }
 
+    //TODO maybe move this to NapsTask?
     def process(TemplateProcessor templateProcessor, NapsExtension napsExtension, Project project) {
-        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this, project.naps.globalVariables, project.naps.globalFragments)
+        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this, project.naps.globalVariables, project.naps.globalFragments, null) //TODO replace last null with properties file
         def finalTemplate = template?.trim() ?: napsExtension.defaultTemplate
         if (mainContent instanceof String) {
             templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$napsExtension.siteOut/$mainContent"))

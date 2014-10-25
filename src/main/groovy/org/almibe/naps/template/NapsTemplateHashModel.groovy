@@ -13,11 +13,13 @@ class NapsTemplateHashModel implements TemplateHashModel {
     ContentGroupProcessor napsHandler
     def globalFragments
     def globalVariables
+    Properties properties
 
-    public NapsTemplateHashModel(ContentGroupProcessor handler, def globalVariables, def globalFragments) {
+    public NapsTemplateHashModel(ContentGroupProcessor handler, def globalVariables, def globalFragments, Properties properties) {
         napsHandler = handler
         this.globalVariables = globalVariables
         this.globalFragments = globalFragments
+        this.properties = properties
     }
 
     @Override
@@ -27,8 +29,8 @@ class NapsTemplateHashModel implements TemplateHashModel {
             //TODO support computedContent
         } else if (key == 'mainContent' && napsHandler.mainContent?.trim()) {
             returnValue = napsHandler.mainContent.trim()
-        } else if (false) {
-            //TODO support properties files
+        } else if (properties?.containsKey(key)) {
+            returnValue = properties.get(key)
         } else if (napsHandler?.fragments.containsKey(key)) {
             //TODO complete
         } else if (napsHandler?.variables.containsKey(key)) {
