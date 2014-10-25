@@ -11,9 +11,13 @@ import org.almibe.naps.ContentGroupProcessor
  */
 class NapsTemplateHashModel implements TemplateHashModel {
     ContentGroupProcessor napsHandler
+    def globalFragments
+    def globalVariables
 
-    public NapsTemplateHashModel(ContentGroupProcessor handler) {
+    public NapsTemplateHashModel(ContentGroupProcessor handler, def globalVariables, def globalFragments) {
         napsHandler = handler
+        this.globalVariables = globalVariables
+        this.globalFragments = globalFragments
     }
 
     @Override
@@ -25,13 +29,13 @@ class NapsTemplateHashModel implements TemplateHashModel {
             returnValue = napsHandler.mainContent.trim()
         } else if (false) {
             //TODO support properties files
-        } else if (napsHandler.fragments.containsKey(key)) {
+        } else if (napsHandler?.fragments.containsKey(key)) {
             //TODO complete
-        } else if (napsHandler.variables.containsKey(key)) {
+        } else if (napsHandler?.variables.containsKey(key)) {
             returnValue = napsHandler.variables[key]
-        } else if (globalFragments.containsKey(key)) {
+        } else if (globalFragments?.containsKey(key)) {
             //TODO suppport fragments
-        } else if (globalVariables.containsKey(key)) {
+        } else if (globalVariables?.containsKey(key)) {
             returnValue = globalVariables[key]
         } else {
             throw new RuntimeException("Value not found: $key")
