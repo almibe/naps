@@ -2,6 +2,7 @@ package org.almibe.naps
 
 import org.almibe.naps.template.NapsTemplateHashModel
 import org.almibe.naps.template.TemplateProcessor
+import org.gradle.api.Project
 
 class ContentGroupProcessor {
     String name
@@ -14,9 +15,15 @@ class ContentGroupProcessor {
         this.name = name
     }
 
-    def process(TemplateProcessor templateProcessor, NapsExtension napsExtension) {
+    def process(TemplateProcessor templateProcessor, NapsExtension napsExtension, Project project) {
+        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this)
         def finalTemplate = template?.trim() ?: napsExtension.defaultTemplate
-        templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(this), "$outputLocation/${computeFileLocation(contentGroup)}${computeFileName(contentGroup)}")
+        if (mainContent instanceof String) {
+            templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$napsExtension.siteOut/$mainContent"))
+        } else {
+            ((List<String>)mainContent).forEach {
+                templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$napsExtension.siteOut/$mainContent"))
+            }
+        }
     }
-
 }

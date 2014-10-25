@@ -5,7 +5,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 class NapsTask extends DefaultTask {
-    TemplateProcessor templateProcessor = new TemplateProcessor()
+    TemplateProcessor templateProcessor = new TemplateProcessor(project.file("$project.extensions.naps.templatesIn"))
 
     final String outputLocation = "$project.buildDir/$project.naps.siteOut"
 
@@ -14,7 +14,7 @@ class NapsTask extends DefaultTask {
         NapsExtension napsExtension = project.extensions.naps
 
         for(ContentGroupProcessor contentGroup : project.extensions.naps.contentGroups) {
-            contentGroup.process(templateProcessor, napsExtension)
+            contentGroup.process(templateProcessor, napsExtension, project)
         }
     }
 }

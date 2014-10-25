@@ -13,10 +13,10 @@ import org.almibe.naps.ContentGroupProcessor
 
 class TemplateProcessor {
     Configuration cfg = new Configuration();
-    TemplateProcessor() {
+    TemplateProcessor(File templateDirectory) {
         // Specify the data source where the template files come from. Here I set a
         // plain directory for it, but non-file-system are possible too:
-        cfg.setDirectoryForTemplateLoading(project.file("$project.extensions.naps.templatesIn"));
+        cfg.setDirectoryForTemplateLoading(templateDirectory);
         // Specify how templates will see the data-model. This is an advanced topic...
         // for now just use this:
         cfg.setObjectWrapper(new DefaultObjectWrapper());
@@ -32,9 +32,9 @@ class TemplateProcessor {
         cfg.setIncompatibleImprovements(new Version(2, 3, 20));  // FreeMarker 2.3.20
     }
 
-    def processTemplate(String templateName, def dataModel, String output) {
+    def processTemplate(String templateName, def dataModel, File output) {
         Template template = cfg.getTemplate(templateName)
-        OutputStream os = new FileOutputStream(project.file(output))
+        OutputStream os = new FileOutputStream(output)
         Writer writer = new OutputStreamWriter(os)
         template.process(dataModel, writer)
         os.close()
