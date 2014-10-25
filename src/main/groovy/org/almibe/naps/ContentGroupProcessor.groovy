@@ -10,4 +10,8 @@ class ContentGroupProcessor {
     ContentGroupProcessor(String name) {
         this.name = name
     }
+
+    def process() {
+
+    }
 }
