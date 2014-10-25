@@ -1,9 +1,12 @@
 package org.almibe.naps
 
+import org.almibe.naps.template.NapsTemplateHashModel
+import org.almibe.naps.template.TemplateProcessor
+
 class ContentGroupProcessor {
-    def name
+    String name
     def mainContent
-    def template
+    String template
     def variables = [:]
     def fragments = [:]
 
@@ -11,7 +14,9 @@ class ContentGroupProcessor {
         this.name = name
     }
 
-    def process() {
-
+    def process(TemplateProcessor templateProcessor, NapsExtension napsExtension) {
+        def finalTemplate = template?.trim() ?: napsExtension.defaultTemplate
+        templateProcessor.processTemplate(finalTemplate, new NapsTemplateHashModel(this), "$outputLocation/${computeFileLocation(contentGroup)}${computeFileName(contentGroup)}")
     }
+
 }
