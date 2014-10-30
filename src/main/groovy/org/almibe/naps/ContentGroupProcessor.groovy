@@ -6,10 +6,9 @@ import org.gradle.api.Project
 
 class ContentGroupProcessor {
     String name
-    def mainContent
+    MainContent mainContent
     String template
-    def variables = [:]
-    def fragments = [:]
+    def groupDataModel = [:]
 
     ContentGroupProcessor(String name) {
         this.name = name
@@ -17,7 +16,7 @@ class ContentGroupProcessor {
 
     //TODO maybe move this to NapsTask?
     def process(TemplateProcessor templateProcessor, NapsExtension napsExtension, Project project, MarkdownProcessor markdownProcessor) {
-        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this, project.naps.globalVariables, project.naps.globalFragments, null, markdownProcessor) //TODO replace last nulls with properties file and template processor
+        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this, project.naps.globalDataModel) //TODO replace last nulls with properties file and template processor
         def finalTemplate = template?.trim() ?: napsExtension.defaultTemplate
         if (mainContent instanceof String) {
             templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$napsExtension.siteOut/$mainContent"))

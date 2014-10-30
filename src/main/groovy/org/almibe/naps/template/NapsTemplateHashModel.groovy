@@ -5,51 +5,31 @@ import freemarker.template.TemplateHashModel
 import freemarker.template.TemplateModel
 import freemarker.template.TemplateModelException
 import org.almibe.naps.ContentGroupProcessor
-import org.almibe.naps.MarkdownProcessor
 
-/**
- * Created by alex on 10/25/14.
- */
 class NapsTemplateHashModel implements TemplateHashModel {
     ContentGroupProcessor napsHandler
-    def globalFragments
-    def globalVariables
-    Properties properties
-    MarkdownProcessor markdownProcessor
+    def globalDataModel
 
-    public NapsTemplateHashModel(ContentGroupProcessor handler, def globalVariables, def globalFragments, Properties properties, MarkdownProcessor markdownProcessor) {
+    public NapsTemplateHashModel(ContentGroupProcessor handler, def globalDataModel) {
         napsHandler = handler
-        this.globalVariables = globalVariables
-        this.globalFragments = globalFragments
-        this.properties = properties
-        this.markdownProcessor = markdownProcessor
+        this.globalDataModel = globalDataModel
     }
 
     @Override
     TemplateModel get(String key) throws TemplateModelException {
-        String returnValue = '';
-        if (false) {
-            //TODO support computedContent?
-        } else if (key == 'mainContent' && napsHandler.mainContent?.trim()) {
-            returnValue = processFragment(napsHandler.mainContent)
-        } else if (properties?.containsKey(key)) {
-            returnValue = properties.get(key)
-        } else if (napsHandler?.fragments?.containsKey(key)) {
-            returnValue = processFragment(napsHandler.fragments.get(key))
-        } else if (napsHandler?.variables?.containsKey(key)) {
-            returnValue = napsHandler.variables[key]
-        } else if (globalFragments?.containsKey(key)) {
-            returnValue = processFragment(globalFragments.get(key))
-        } else if (globalVariables?.containsKey(key)) {
-            returnValue = globalVariables[key]
+        String returnValue;
+        if (key == 'mainContent' && napsHandler.mainContent?.content.trim()) {
+            returnValue = napsHandler.mainContent.content
+        } else if (napsHandler.mainContent.contentDataModel?.containsKey(key)) {
+            returnValue = napsHandler.mainContent.contentDataModel.get(key)
+        } else if (napsHandler?.groupDataModel?.containsKey(key)) {
+            returnValue = napsHandler.groupDataModel.get(key)
+        } else if (globalDataModel?.containsKey(key)) {
+            returnValue = globalDataModel.get(key)
         } else {
             throw new RuntimeException("Value not found: $key")
         }
         return new SimpleScalar(returnValue)
-    }
-
-    String processFragment(String fragment) {
-        return markdownProcessor.process(fragment)
     }
 
     @Override

@@ -8,8 +8,7 @@ class NapsExtension {
     String templatesIn = "src/naps/templates"
     String siteOut = "naps/site"
     String defaultTemplate = ''
-    def globalVariables = [:]
-    def globalFragments = [:]
+    def globalDataModel = [:]
 
     final NamedDomainObjectContainer<ContentGroupProcessor> contentGroups
 
