@@ -2,14 +2,9 @@ package org.almibe.naps.template
 
 import freemarker.template.Configuration
 import freemarker.template.DefaultObjectWrapper
-import freemarker.template.SimpleScalar
 import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
-import freemarker.template.TemplateHashModel
-import freemarker.template.TemplateModel
-import freemarker.template.TemplateModelException
 import freemarker.template.Version
-import org.almibe.naps.ContentGroupProcessor
 
 class TemplateProcessor {
     Configuration cfg = new Configuration();

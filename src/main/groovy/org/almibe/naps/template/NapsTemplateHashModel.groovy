@@ -4,13 +4,13 @@ import freemarker.template.SimpleScalar
 import freemarker.template.TemplateHashModel
 import freemarker.template.TemplateModel
 import freemarker.template.TemplateModelException
-import org.almibe.naps.ContentGroupProcessor
+import org.almibe.naps.ContentGroup
 
 class NapsTemplateHashModel implements TemplateHashModel {
-    ContentGroupProcessor napsHandler
+    ContentGroup napsHandler
     def globalDataModel
 
-    public NapsTemplateHashModel(ContentGroupProcessor handler, def globalDataModel) {
+    public NapsTemplateHashModel(ContentGroup handler, def globalDataModel) {
         napsHandler = handler
         this.globalDataModel = globalDataModel
     }

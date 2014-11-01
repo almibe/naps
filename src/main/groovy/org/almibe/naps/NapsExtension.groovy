@@ -10,7 +10,7 @@ class NapsExtension {
     String defaultTemplate = ''
     def globalDataModel = [:]
 
-    final NamedDomainObjectContainer<ContentGroupProcessor> contentGroups
+    final NamedDomainObjectContainer<ContentGroup> contentGroups
 
     NapsExtension(handlers) {
         this.contentGroups = handlers
