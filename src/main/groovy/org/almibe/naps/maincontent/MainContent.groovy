@@ -1,4 +1,4 @@
-package org.almibe.naps
+package org.almibe.naps.maincontent
 
 interface MainContent {
     String getContent()

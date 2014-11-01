@@ -1,5 +1,6 @@
 package org.almibe.naps
 
+import org.almibe.naps.maincontent.MainContent
 import org.almibe.naps.template.NapsTemplateHashModel
 import org.almibe.naps.template.TemplateProcessor
 import org.gradle.api.Project
