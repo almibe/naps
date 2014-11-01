@@ -1,5 +1,6 @@
 package org.almibe.naps
 
+import org.almibe.naps.maincontent.MainContent
 import org.almibe.naps.template.NapsTemplateHashModel
 import org.almibe.naps.template.TemplateProcessor
 import org.gradle.api.DefaultTask
@@ -10,8 +11,6 @@ class NapsTask extends DefaultTask {
 
     @TaskAction
     def naps() {
-        NapsExtension napsExtension = project.extensions.naps
-
         for(ContentGroup contentGroup : project.extensions.naps.contentGroups) {
             process(contentGroup)
         }
@@ -19,14 +18,13 @@ class NapsTask extends DefaultTask {
 
     def process(ContentGroup contentGroup) {
         NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this, napsExtension.globalDataModel)
-        def finalTemplate = template?.trim() ?: napsExtension.defaultTemplate
-        if (mainContent instanceof String) {
-            templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$napsExtension.siteOut/$mainContent"))
+        def finalTemplate = contentGroup.template?.trim() ?: project.extensions.naps.defaultTemplate
+        if (contentGroup.mainContent instanceof String) {
+            templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$project.extensions.naps.siteOut/$contentGroup.mainContent.finalLocation"))
         } else {
-            ((List<String>)mainContent).forEach {
-                templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$napsExtension.siteOut/$mainContent"))
+            ((List<MainContent>)mainContent).forEach { MainContent currentMainContent ->
+                templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$project.extensions.naps.siteOut/$currentMainContent.finalLocation"))
             }
         }
     }
-
 }
