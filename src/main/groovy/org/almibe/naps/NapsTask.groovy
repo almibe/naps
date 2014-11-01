@@ -17,7 +17,7 @@ class NapsTask extends DefaultTask {
     }
 
     def process(ContentGroup contentGroup) {
-        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(this, napsExtension.globalDataModel)
+        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(contentGroup, project.extensions.naps.globalDataModel)
         def finalTemplate = contentGroup.template?.trim() ?: project.extensions.naps.defaultTemplate
         if (contentGroup.mainContent instanceof String) {
             templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$project.extensions.naps.siteOut/$contentGroup.mainContent.finalLocation"))
