@@ -17,7 +17,7 @@ class NapsTemplateHashModel implements TemplateHashModel {
 
     @Override
     TemplateModel get(String key) throws TemplateModelException {
-        String returnValue;
+        def returnValue;
         if (key == 'mainContent' && napsHandler.mainContent?.content.trim()) {
             returnValue = napsHandler.mainContent.content
         } else if (napsHandler.mainContent.contentDataModel?.containsKey(key)) {
@@ -29,11 +29,15 @@ class NapsTemplateHashModel implements TemplateHashModel {
         } else {
             throw new RuntimeException("Value not found: $key")
         }
-        return new SimpleScalar(returnValue)
+        return new SimpleScalar(getValue(returnValue))
     }
 
     @Override
     boolean isEmpty() throws TemplateModelException {
         return false
+    }
+
+    def getValue(def value) {
+        value in Closure ? value() : value
     }
 }
