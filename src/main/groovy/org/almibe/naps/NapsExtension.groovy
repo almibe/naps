@@ -4,7 +4,7 @@ import org.almibe.naps.maincontent.MainContentFactory
 import org.gradle.api.NamedDomainObjectContainer
 
 class NapsExtension {
-    String fragmentsIn = "src/naps/fragments"
+    String contentsIn = "src/naps/contents"
     String resourcesIn = "src/naps/resources"
     String templatesIn = "src/naps/templates"
     String siteOut = "naps/site"
@@ -23,4 +23,3 @@ class NapsExtension {
         contentGroups.configure(closure)
     }
 }
-
