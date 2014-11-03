@@ -2,9 +2,10 @@ package org.almibe.naps
 
 import org.pegdown.PegDownProcessor
 
+@Singleton
 class MarkdownProcessor {
-    final PegDownProcessor pegDownProcessor
-    final String rootMarkdownLocation
+    private final PegDownProcessor pegDownProcessor
+    private final String rootMarkdownLocation
 
     MarkdownProcessor(String rootMarkdownLocation) {
         this.pegDownProcessor = new PegDownProcessor()
