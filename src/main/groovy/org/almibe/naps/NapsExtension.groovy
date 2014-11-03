@@ -1,5 +1,6 @@
 package org.almibe.naps
 
+import org.almibe.naps.maincontent.MainContentFactory
 import org.gradle.api.NamedDomainObjectContainer
 
 class NapsExtension {
@@ -11,17 +12,15 @@ class NapsExtension {
     def globalDataModel = [:]
 
     final NamedDomainObjectContainer<ContentGroup> contentGroups
+    @Delegate final MainContentFactory mainContentFactory
 
-    NapsExtension(handlers) {
-        this.contentGroups = handlers
+    NapsExtension(mainContentFactory, contentGroups) {
+        this.mainContentFactory = mainContentFactory
+        this.contentGroups = contentGroups
     }
 
     def contentGroups(Closure closure) {
         contentGroups.configure(closure)
-    }
-
-    def test() {
-        println("test")
     }
 }
 
