@@ -14,7 +14,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile "org.codehaus.groovy:groovy-all:2.3.3"
-    compile 'org.freemarker:freemarker:2.3.20'
+    compile 'org.freemarker:freemarker:2.3.21'
     compile 'org.pegdown:pegdown:1.4.2'
 
     testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
