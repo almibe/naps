@@ -12,8 +12,12 @@ class MainContentFactory {
 
     MainContent md(String file) {
         MainContent result = new MainContentBean()
-        result.content = MarkdownProcessor.instance.process(project.file(root+file)) //TODO finish
-        result.contentDataModel = //TODO check for properties file
+        result.content = MarkdownProcessor.instance.process(project.file("$project.extensions.naps.contentsIn/$file"))
+
+        Properties properties = new Properties() //TODO check for properties file
+        File propertiesFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
+        result.contentDataModel
+
         result.finalLocation = //TODO get final location
         return result
     }
@@ -30,5 +34,12 @@ class MainContentFactory {
         //get list of all files in directory
         //for each file call md() and add result to list
         //return list
+    }
+
+    File switchFileExtension(File f, String newExtension) {
+        File parent = f.parentFile
+        String name = f.name
+        int index = name.lastIndexOf('.')
+        return index == -1 ? new File(parent, name + '.' + newExtension) : new File(parent, name.substring(0,index) + '.' + newExtension)
     }
 }
