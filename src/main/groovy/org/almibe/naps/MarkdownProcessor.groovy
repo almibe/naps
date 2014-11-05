@@ -2,7 +2,6 @@ package org.almibe.naps
 
 import org.pegdown.PegDownProcessor
 
-@Singleton
 class MarkdownProcessor {
     private final PegDownProcessor pegDownProcessor
     private final String rootMarkdownLocation
