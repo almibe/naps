@@ -1,32 +1,36 @@
 package org.almibe.naps.maincontent
 
-import org.almibe.naps.MarkdownProcessor
+import groovy.json.JsonSlurper
 import org.gradle.api.Project
+import org.pegdown.PegDownProcessor
 
 class MainContentFactory {
     Project project
-
+    private static final PegDownProcessor markDownProcessor = new PegDownProcessor()
+    private static final JsonSlurper jsonSlurper = new JsonSlurper()
     public MainContentFactory(Project project) {
         this.project = project
     }
 
     MainContent md(String file) {
         MainContent result = new MainContentBean()
-        result.content = MarkdownProcessor.instance.process(project.file("$project.extensions.naps.contentsIn/$file"))
+        result.content = markDownProcessor.markdownToHtml(project.file("$project.extensions.naps.contentsIn/$file").text)
 
-        Properties properties = new Properties() //TODO check for properties file
-        File propertiesFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
-        result.contentDataModel
+        File jsonFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
+        result.contentDataModel = jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:]
 
-        result.finalLocation = //TODO get final location
+        result.finalLocation = switchFileExtension(project.file("$project.extensions.naps.siteOut/$file"), 'html')
         return result
     }
 
     MainContent html(String file) {
         MainContent result = new MainContentBean()
-        result.content = project.file(root+file).text //TODO finish getting path
-        result.contentDataModel = //TODO check for properties files
-        result.finalLocation = //TODO get final location
+        result.content = project.file("$project.extensions.naps.contentsIn/$file").text
+
+        File jsonFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
+        result.contentDataModel = jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:]
+
+        result.finalLocation = project.file("$project.extensions.naps.siteOut/$file")
         return result
     }
 
