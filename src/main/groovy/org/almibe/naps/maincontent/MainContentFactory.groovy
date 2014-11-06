@@ -19,7 +19,7 @@ class MainContentFactory {
         File jsonFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
         result.contentDataModel = jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:]
 
-        result.finalLocation = switchFileExtension(project.file("$project.extensions.naps.siteOut/$file"), 'html')
+        result.finalLocation = switchFileExtension(project.file("$project.buildDir/$project.extensions.naps.siteOut/$file"), 'html')
         return result
     }
 
@@ -30,7 +30,7 @@ class MainContentFactory {
         File jsonFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
         result.contentDataModel = jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:]
 
-        result.finalLocation = project.file("$project.extensions.naps.siteOut/$file")
+        result.finalLocation = project.file("$project.buildDir/$project.extensions.naps.siteOut/$file")
         return result
     }
 

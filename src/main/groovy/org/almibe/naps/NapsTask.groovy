@@ -20,10 +20,10 @@ class NapsTask extends DefaultTask {
         NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(contentGroup, project.extensions.naps.globalDataModel)
         def finalTemplate = contentGroup.template?.trim() ?: project.extensions.naps.defaultTemplate
         if (contentGroup.mainContent instanceof MainContent) {
-            templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$project.extensions.naps.siteOut/$contentGroup.mainContent.finalLocation"))
+            templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, contentGroup.mainContent.finalLocation)
         } else if (contentGroup.mainContent instanceof List<MainContent>) {
             ((List<MainContent>)contentGroup.mainContent).forEach { MainContent currentMainContent ->
-                templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, project.file("$project.buildDir/$project.extensions.naps.siteOut/$currentMainContent.finalLocation"))
+                templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, currentMainContent.finalLocation)
             }
         } else {
             throw new RuntimeException("MainContent must be instance of MainContent or List<MainContent> -- $contentGroup.mainContent")
