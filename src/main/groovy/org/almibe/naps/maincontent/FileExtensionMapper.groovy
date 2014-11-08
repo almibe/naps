@@ -5,7 +5,11 @@ class FileExtensionMapper {
         File parent = f.parentFile
         String name = f.name
         int index = name.lastIndexOf('.')
-        return index == -1 ? new File(parent, name + '.' + newExtension) : new File(parent, name.substring(0,index) + '.' + newExtension)
+        if(parent != null) {
+            return index == -1 ? new File(parent, name + '.' + newExtension) : new File(parent, name.substring(0, index) + '.' + newExtension)
+        } else {
+            return index == -1 ? new File(name + '.' + newExtension) : new File(name.substring(0, index) + '.' + newExtension)
+        }
     }
 
     String switchFileExtension(String s, String newExtension) {
