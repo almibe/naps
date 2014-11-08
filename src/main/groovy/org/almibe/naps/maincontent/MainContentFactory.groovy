@@ -5,9 +5,11 @@ import org.gradle.api.Project
 import org.pegdown.PegDownProcessor
 
 class MainContentFactory {
-    Project project
     private static final PegDownProcessor markDownProcessor = new PegDownProcessor()
     private static final JsonSlurper jsonSlurper = new JsonSlurper()
+    @Delegate private static final FileExtensionMapper extensionMapper = new FileExtensionMapper()
+
+    Project project
     public MainContentFactory(Project project) {
         this.project = project
     }
@@ -38,12 +40,6 @@ class MainContentFactory {
         //get list of all files in directory
         //for each file call md() and add result to list
         //return list
-    }
-
-    File switchFileExtension(File f, String newExtension) {
-        File parent = f.parentFile
-        String name = f.name
-        int index = name.lastIndexOf('.')
-        return index == -1 ? new File(parent, name + '.' + newExtension) : new File(parent, name.substring(0,index) + '.' + newExtension)
+        throw new RuntimeException("not implemented")
     }
 }
