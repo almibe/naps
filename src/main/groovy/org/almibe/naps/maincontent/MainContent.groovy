@@ -2,6 +2,6 @@ package org.almibe.naps.maincontent
 
 interface MainContent {
     String getContent()
-    File getFinalLocation()
+    String getFinalLocation()
     Map<String, Object> getContentDataModel()
 }

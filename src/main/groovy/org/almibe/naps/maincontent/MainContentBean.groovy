@@ -4,7 +4,7 @@ import groovy.transform.Canonical
 
 @Canonical
 class MainContentBean implements MainContent {
-    File finalLocation
+    String finalLocation
     String content
     Map<String, Object> contentDataModel
 }
