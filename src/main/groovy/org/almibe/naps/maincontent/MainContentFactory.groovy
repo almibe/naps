@@ -64,7 +64,7 @@ class MainContentFactory {
         } else {
             contents = new File("$project.extensions.naps.contentsIn/$directory").listFiles()
         }
-        return contents.grep {File it -> it.isFile() && getExtension(it) == extension} .collect {File it -> println "$it.absolutePath"; (it.absolutePath - rootLocation)}
+        return contents.grep {File it -> it.isFile() && getExtension(it) == extension} .collect {File it -> (it.absolutePath - rootLocation)}
     }
 
 
