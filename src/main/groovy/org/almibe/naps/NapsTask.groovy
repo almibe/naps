@@ -17,12 +17,13 @@ class NapsTask extends DefaultTask {
     }
 
     def process(ContentGroup contentGroup) {
-        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(contentGroup, project.extensions.naps.globalDataModel)
         def finalTemplate = contentGroup.template?.trim() ?: project.extensions.naps.defaultTemplate
         if (contentGroup.mainContent instanceof MainContent) {
+            NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(contentGroup.mainContent, contentGroup.groupDataModel, project.extensions.naps.globalDataModel)
             templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, getFinalLocationFile(contentGroup.mainContent.finalLocation))
         } else if (contentGroup.mainContent instanceof List<MainContent>) {
             ((List<MainContent>)contentGroup.mainContent).forEach { MainContent currentMainContent ->
+                NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(currentMainContent, contentGroup.groupDataModel, project.extensions.naps.globalDataModel)
                 templateProcessor.processTemplate(finalTemplate, napsTemplateHashModel, getFinalLocationFile(currentMainContent.finalLocation))
             }
         } else {

@@ -5,25 +5,28 @@ import freemarker.template.TemplateHashModel
 import freemarker.template.TemplateModel
 import freemarker.template.TemplateModelException
 import org.almibe.naps.ContentGroup
+import org.almibe.naps.maincontent.MainContent
 
 class NapsTemplateHashModel implements TemplateHashModel {
-    ContentGroup napsHandler
+    def groupDataModel
     def globalDataModel
+    MainContent mainContent
 
-    public NapsTemplateHashModel(ContentGroup handler, def globalDataModel) {
-        napsHandler = handler
+    public NapsTemplateHashModel(MainContent mainContent, def groupDataModel, def globalDataModel) {
+        this.groupDataModel = groupDataModel
         this.globalDataModel = globalDataModel
+        this.mainContent = mainContent
     }
 
     @Override
     TemplateModel get(String key) throws TemplateModelException {
         def returnValue;
-        if (key == 'mainContent' && napsHandler.mainContent?.content.trim()) {
-            returnValue = napsHandler.mainContent.content
-        } else if (napsHandler.mainContent.contentDataModel?.containsKey(key)) {
-            returnValue = napsHandler.mainContent.contentDataModel.get(key)
-        } else if (napsHandler?.groupDataModel?.containsKey(key)) {
-            returnValue = napsHandler.groupDataModel.get(key)
+        if (key == 'mainContent' && mainContent?.content.trim()) {
+            returnValue = mainContent.content
+        } else if (mainContent.contentDataModel?.containsKey(key)) {
+            returnValue = mainContent.contentDataModel.get(key)
+        } else if (groupDataModel?.containsKey(key)) {
+            returnValue = groupDataModel.get(key)
         } else if (globalDataModel?.containsKey(key)) {
             returnValue = globalDataModel.get(key)
         } else {

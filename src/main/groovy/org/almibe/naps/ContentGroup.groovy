@@ -4,7 +4,7 @@ import org.almibe.naps.maincontent.MainContent
 
 class ContentGroup {
     String name
-    MainContent mainContent
+    def mainContent
     String template
     def groupDataModel = [:]
 

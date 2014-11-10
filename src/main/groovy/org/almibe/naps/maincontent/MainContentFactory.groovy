@@ -58,13 +58,13 @@ class MainContentFactory {
 
     List<String> getAllFiles(String directory, String extension, boolean recursive) {
         def contents = []
-        def rootLocation = project.file(directory).absolutePath
+        def rootLocation = project.file(project.extensions.naps.contentsIn).absolutePath
         if(recursive) {
-            contents = project.fileTree(dir: directory)
+            contents = project.fileTree(dir: "$project.extensions.naps.contentsIn/$directory")
         } else {
-            contents = new File(directory).listFiles()
+            contents = new File("$project.extensions.naps.contentsIn/$directory").listFiles()
         }
-        return contents.grep {File it -> it.isFile() && getExtension(it) == directory} .collect {File it -> (it.absolutePath - rootLocation)}
+        return contents.grep {File it -> it.isFile() && getExtension(it) == extension} .collect {File it -> println "$it.absolutePath"; (it.absolutePath - rootLocation)}
     }
 
 
