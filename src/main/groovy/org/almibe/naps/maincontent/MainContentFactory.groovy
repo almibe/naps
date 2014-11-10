@@ -66,6 +66,4 @@ class MainContentFactory {
         }
         return contents.grep {File it -> it.isFile() && getExtension(it) == extension} .collect {File it -> (it.absolutePath - rootLocation)}
     }
-
-
 }
