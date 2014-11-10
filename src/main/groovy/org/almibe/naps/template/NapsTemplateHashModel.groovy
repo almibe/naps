@@ -41,6 +41,11 @@ class NapsTemplateHashModel implements TemplateHashModel {
     }
 
     def getValue(def value) {
-        value in Closure ? value() : value
+        switch (value) {
+            case String: return value;
+            case Closure: return value();
+            case MainContent: return value.content
+            default: throw new RuntimeException("Value must be of type String, Closure, or MainContent not $value.getClass()")
+        }
     }
 }

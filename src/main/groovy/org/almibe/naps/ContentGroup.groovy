@@ -1,7 +1,5 @@
 package org.almibe.naps
 
-import org.almibe.naps.maincontent.MainContent
-
 class ContentGroup {
     String name
     def mainContent
