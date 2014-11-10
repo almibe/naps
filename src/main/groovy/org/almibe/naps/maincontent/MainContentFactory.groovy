@@ -36,10 +36,36 @@ class MainContentFactory {
         return result
     }
 
-    List<MainContentFactory> mdDir(String directory) {
-        //get list of all files in directory
-        //for each file call md() and add result to list
-        //return list
-        throw new RuntimeException("not implemented")
+    List<MainContent> mdDir(String directory) {
+        List<String> files = getAllFiles(directory, 'md', false)
+        return files.collect {file -> md(file)}
     }
+
+    List<MainContent> htmlDir(String directory) {
+        List<String> files = getAllFiles(directory, 'html', false)
+        return files.collect {file -> html(file) }
+    }
+
+    List<MainContent> mdDirRec(String directory) {
+        List<String> files = getAllFiles(directory, 'md', true)
+        return files.collect {file -> md(file)}
+    }
+
+    List<MainContent> htmlDirRec(String directory) {
+        List<String> files = getAllFiles(directory, 'html', true)
+        return files.collect {file -> html(file) }
+    }
+
+    List<String> getAllFiles(String directory, String extension, boolean recursive) {
+        def contents = []
+        def rootLocation = project.file(directory).absolutePath
+        if(recursive) {
+            contents = project.fileTree(dir: directory)
+        } else {
+            contents = new File(directory).listFiles()
+        }
+        return contents.grep {File it -> it.isFile() && getExtension(it) == directory} .collect {File it -> (it.absolutePath - rootLocation)}
+    }
+
+
 }

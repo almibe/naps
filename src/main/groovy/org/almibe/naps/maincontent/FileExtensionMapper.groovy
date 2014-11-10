@@ -15,4 +15,16 @@ class FileExtensionMapper {
     String switchFileExtension(String s, String newExtension) {
         return switchFileExtension(new File(s), newExtension).path
     }
+
+    String getExtension(File file) {
+        String name = file.name
+        int index = name.lastIndexOf('.')
+        return index == -1 ? '' : name.substring(index+1)
+    }
+
+    String getExtension(String file) {
+        return getExtension(new File(file))
+    }
+
+
 }
