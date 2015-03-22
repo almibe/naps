@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     compile gradleApi()
-    compile "org.codehaus.groovy:groovy-all:2.3.3"
+    compile localGroovy()
     compile 'org.freemarker:freemarker:2.3.21'
     compile 'org.pegdown:pegdown:1.4.2'
 

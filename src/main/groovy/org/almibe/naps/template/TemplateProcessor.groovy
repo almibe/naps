@@ -36,5 +36,12 @@ class TemplateProcessor {
         template.process(dataModel, writer)
         os.close()
     }
-}
 
+    String processTemplate(String templateName, def dataModel) {
+        Template template = cfg.getTemplate(templateName)
+        StringBuilder sb = new StringBuilder()
+        Writer writer = new OutputStreamWriter(sb)
+        template.process(dataModel, writer)
+        return sb.toString()
+    }
+}
