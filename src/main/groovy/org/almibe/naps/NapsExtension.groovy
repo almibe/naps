@@ -9,7 +9,6 @@ class NapsExtension {
     String templatesIn = "src/naps/templates"
     String siteOut = "naps/site"
     String defaultTemplate = ''
-    def globalDataModel = [:]
 
     final NamedDomainObjectContainer<ContentGroup> contentGroups
     @Delegate final MainContentFactory mainContentFactory

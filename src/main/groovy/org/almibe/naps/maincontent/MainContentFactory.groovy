@@ -1,7 +1,6 @@
 package org.almibe.naps.maincontent
 
 import groovy.json.JsonSlurper
-import org.almibe.naps.template.NapsTemplateHashModel
 import org.almibe.naps.template.TemplateProcessor
 import org.gradle.api.Project
 import org.pegdown.PegDownProcessor
@@ -19,10 +18,10 @@ class MainContentFactory {
 
     MainContent md(String file) {
         MainContent result = new MainContentBean()
-        result.content = markDownProcessor.markdownToHtml(project.file("$project.extensions.naps.contentsIn/$file").text)
+        result.dataModel['mainContent'] = markDownProcessor.markdownToHtml(project.file("$project.extensions.naps.contentsIn/$file").text)
 
         File jsonFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
-        result.contentDataModel = jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:]
+        result.dataModel.putAll(jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:])
 
         result.finalLocation = switchFileExtension(file, 'html')
         return result
@@ -30,18 +29,17 @@ class MainContentFactory {
 
     MainContent html(String file) {
         MainContent result = new MainContentBean()
-        result.content = project.file("$project.extensions.naps.contentsIn/$file").text
+        result.dataModel['mainContent'] = project.file("$project.extensions.naps.contentsIn/$file").text
 
         File jsonFile = switchFileExtension(project.file("$project.extensions.naps.contentsIn/$file"), 'json')
-        result.contentDataModel = jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:]
+        result.dataModel.putAll(jsonFile.exists() ? jsonSlurper.parse(jsonFile) : [:])
 
         result.finalLocation = file
         return result
     }
 
-    String template(String template, MainContent mainContent, def dataModel) {
-        NapsTemplateHashModel napsTemplateHashModel = new NapsTemplateHashModel(mainContent, dataModel, [:])
-        return fetchTemplateProcessor().processTemplate(template, napsTemplateHashModel)
+    String template(String template, def dataModel) {
+        return fetchTemplateProcessor().processTemplate(template, dataModel)
     }
 
     List<MainContent> mdDir(String directory) {
@@ -65,7 +63,7 @@ class MainContentFactory {
     }
 
     List<String> getAllFiles(String directory, String extension, boolean recursive) {
-        def contents = []
+        def contents
         def rootLocation = project.file(project.extensions.naps.contentsIn).absolutePath
         if(recursive) {
             contents = project.fileTree(dir: "$project.extensions.naps.contentsIn/$directory")
