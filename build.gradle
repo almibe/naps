@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile localGroovy()
-    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.asciidoctor:asciidoctorj:1.5.4'
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
