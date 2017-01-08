@@ -46,7 +46,7 @@ class NapsPlugin implements Plugin<Project> {
                         throw new RuntimeException("${it.name} and ${trimExtension(it.name) + ".html"} can't both exist in source dir.")
                     }
                     it.exclude() //don't export this file but do create it's converted output
-                    Path jsonFile = sourceFile.toPath().resolveSibling(it.name + ".json")
+                    Path jsonFile = sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".json")
                     def jsonConfig = Files.exists(jsonFile) ? jsonSlurper.parse(jsonFile.toFile()) : [:]
                     def content = asciidoctor.convert(sourceFile.text, [:])
                     def templateFileName = jsonConfig.template != null ?
@@ -55,6 +55,9 @@ class NapsPlugin implements Plugin<Project> {
                     try {
                         File templateFile = project.file(templateFileLocation)
                         jsonConfig.content = content
+                        jsonConfig.fragments = { String fragmentName ->
+                            return project.file("${project.naps.fragmentsIn}/$fragmentName").text
+                        }
                         def template = templateEngine.createTemplate(templateFile).make(jsonConfig)
                         def resultFileName = trimExtension(it.sourcePath) + ".html"
                         def resultFile = project.file("${project.naps.siteOut}${resultFileName}")
