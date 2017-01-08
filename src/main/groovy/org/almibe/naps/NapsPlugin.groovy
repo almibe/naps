@@ -11,10 +11,10 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class NapsPluginExtension {
-    String contentsIn = "src/naps/content"
-    String fragmentsIn = "src/naps/fragments"
-    String templatesIn = "src/naps/templates"
-    String siteOut = "naps/site"
+    String contentsIn = "src/naps/content/"
+    String fragmentsIn = "src/naps/fragments/"
+    String templatesIn = "src/naps/templates/"
+    String siteOut = "build/naps/site/"
 
     String defaultTemplate = ""
     List<TemplateDefinition> templateDefinitions = []
@@ -41,7 +41,7 @@ class NapsPlugin implements Plugin<Project> {
             into "${project.buildDir}/${project.naps.siteOut}"
 
             eachFile {
-                def sourceFile = project.file(it.sourcePath)
+                def sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
                 if (it.name.endsWith('.json')) { //exclude .json files if there is a .txt file with it's same name
                     if (sourceFile.toPath().resolveSibling(it.name + ".txt") != null) {
                         it.exclude()
@@ -64,12 +64,21 @@ class NapsPlugin implements Plugin<Project> {
                             return false
                         }
                     }
-                    File templateFile = project.file(templateFileName)
-                    jsonConfig.content = content
-                    def template = templateEngine.createTemplate(templateFile).make(jsonConfig)
-                    def resultFileName = trimExtension(it.sourcePath) + ".html"
-                    def resultFile = project.file(resultFileName)
-                    resultFile.text = template.toString()
+                    String templateFileLocation = "${project.naps.templatesIn}$templateFileName"
+                    try {
+                        File templateFile = project.file(templateFileLocation)
+                        jsonConfig.content = content
+                        def template = templateEngine.createTemplate(templateFile).make(jsonConfig)
+                        def resultFileName = trimExtension(it.sourcePath) + ".html"
+                        def resultFile = project.file("${project.naps.siteOut}${resultFileName}")
+                        if (!resultFile.parentFile.exists()) {
+                            resultFile.parentFile.mkdirs()
+                        }
+                        assert (resultFile.createNewFile() == true)
+                        resultFile.text = template.toString()
+                    } catch (Exception ex) {
+                        throw new RuntimeException("Error processing template ${templateFileLocation}", ex)
+                    }
                 }
             }
         }
