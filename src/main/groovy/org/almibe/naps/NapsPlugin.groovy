@@ -38,7 +38,7 @@ class NapsPlugin implements Plugin<Project> {
 
         project.task("naps", type:Copy) {
             from "${project.naps.contentsIn}"
-            into "${project.buildDir}/${project.naps.siteOut}"
+            into "${project.naps.siteOut}"
 
             eachFile {
                 def sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
