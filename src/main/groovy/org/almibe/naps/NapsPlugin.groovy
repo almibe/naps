@@ -16,13 +16,7 @@ class NapsPluginExtension {
     String templatesIn = "src/naps/templates/"
     String siteOut = "build/naps/site/"
 
-    String defaultTemplate = ""
-    List<TemplateDefinition> templateDefinitions = []
-}
-
-interface TemplateDefinition {
-    String templateName
-    boolean match(File file)
+    String defaultTemplate = "default.html"
 }
 
 class NapsPlugin implements Plugin<Project> {
@@ -55,15 +49,8 @@ class NapsPlugin implements Plugin<Project> {
                     Path jsonFile = sourceFile.toPath().resolveSibling(it.name + ".json")
                     def jsonConfig = Files.exists(jsonFile) ? jsonSlurper.parse(jsonFile.toFile()) : [:]
                     def content = asciidoctor.convert(sourceFile.text, [:])
-                    def templateFileName = project.naps.defaultTemplate
-                    project.naps.templateDefinitions.find { templateDefinition ->
-                        if (templateDefinition.matches()) {
-                            templateFileName = templateDefinition.templateName
-                            return true
-                        } else {
-                            return false
-                        }
-                    }
+                    def templateFileName = jsonConfig.template != null ?
+                            jsonConfig.template : project.naps.defaultTemplate
                     String templateFileLocation = "${project.naps.templatesIn}$templateFileName"
                     try {
                         File templateFile = project.file(templateFileLocation)
