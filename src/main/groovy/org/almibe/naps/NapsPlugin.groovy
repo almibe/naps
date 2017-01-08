@@ -1,5 +1,7 @@
 package org.almibe.naps
 
+import groovy.text.GStringTemplateEngine
+import org.asciidoctor.Asciidoctor
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -11,7 +13,7 @@ class NapsPluginExtension {
     String siteOut = "naps/site"
 
     String defaultTemplate = ""
-    List<TemplateDefinition> templateDefinition = []
+    List<TemplateDefinition> templateDefinitions = []
 }
 
 interface TemplateDefinition {
@@ -20,6 +22,10 @@ interface TemplateDefinition {
 }
 
 class NapsPlugin implements Plugin<Project> {
+
+    Asciidoctor asciidoctor = Asciidoctor.Factory.create()
+    GStringTemplateEngine templateEngine = new GStringTemplateEngine()
+
     @Override
     void apply(Project project) {
 
@@ -36,9 +42,25 @@ class NapsPlugin implements Plugin<Project> {
                     }
                 }
                 if (it.name.endsWith('.txt')) {
-                    //TODO convert them with asciidoctorj and run them through the configured groovy template
-                    //TODO have a default template and also have a way of defining template matches with a matcher function
-                    //TODO if none of the registered matcher functions pass then use the default
+                    if (it.file.path.resolveSibling(it.name.trim(4) + ".html") != null) {
+                        throw new RuntimeException("${it.name} and ${it.name.trim(4) + ".html"} can't both exist in source dir.")
+                    }
+                    it.exclude() //don't export this file but do create it's converted output
+                    def jsonConfig = [:] //TODO read in json file if it exists
+                    def content = asciidoctor.convert(it.file.txt, [:])
+                    def templateFileName = project.naps.defaultTemplate
+                    project.naps.templateDefinitions.find { templateDefinition ->
+                        if (templateDefinition.matches()) {
+                            templateFileName = templateDefinition.templateName
+                            return true
+                        } else {
+                            return false
+                        }
+                    }
+                    //TODO run them through the configured groovy template
+                    File templateFile = file(templateFileName)
+                    def template = templateEngine.createTemplate(templateFile).make([content: content])
+                    //TODO write template.toString() to the output dir as an html file
                 }
             }
         }
