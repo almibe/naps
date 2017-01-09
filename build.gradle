@@ -1,14 +1,27 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.almibe:easy-pub-plugin:0.2.0'
+    }
+}
+
+apply plugin: 'org.almibe.easypubplugin'
 apply plugin: 'groovy'
+apply plugin: 'java'
 apply plugin: 'maven'
+
+group = 'org.almibe'
+version = '0.1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-project.group = 'org.almibe'
-project.version = '0.0.1-SNAPSHOT'
-
 repositories {
-    mavenCentral()
+    mavenLocal()
+    jcenter()
 }
 
 dependencies {
