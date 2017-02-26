@@ -19,6 +19,8 @@ class NapsPluginExtension {
     String defaultTemplate = "default.html"
 
     String asciiDocExtension = "adoc"
+
+    String directoryDefaultsFile = "directory.default.json"
 }
 
 class NapsPlugin implements Plugin<Project> {
@@ -38,6 +40,9 @@ class NapsPlugin implements Plugin<Project> {
 
             eachFile {
                 def sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
+                if (it.name == project.naps.directoryDefaultsFile) { //exclude directory default config files
+                    it.exclude()
+                }
                 if (it.name.endsWith('.json')) { //exclude .json files if there is an asciidoc file with it's same name
                     if (sourceFile.toPath().resolveSibling("${it.name}.${project.naps.asciiDocExtension}") != null) {
                         it.exclude()
@@ -49,7 +54,9 @@ class NapsPlugin implements Plugin<Project> {
                     }
                     it.exclude() //don't export this file but do create it's converted output
                     Path jsonFile = sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".json")
-                    def jsonConfig = Files.exists(jsonFile) ? jsonSlurper.parse(jsonFile.toFile()) : [:]
+                    Path directoryConfigFile = sourceFile.toPath().resolveSibling(project.naps.directoryDefaultsFile)
+                    def directoryConfig = (Files.exists(directoryConfigFile) ? jsonSlurper.parse(directoryConfigFile.toFile()) : [:])
+                    def jsonConfig = directoryConfig + (Files.exists(jsonFile) ? jsonSlurper.parse(jsonFile.toFile()) : [:])
                     def content = asciidoctor.convert(sourceFile.text, [:])
                     def templateFileName = jsonConfig.template != null ?
                             jsonConfig.template : project.naps.defaultTemplate
