@@ -12,7 +12,6 @@ import java.nio.file.Path
 
 class NapsPluginExtension {
     String contentsIn = "src/naps/content/"
-    String fragmentsIn = "src/naps/fragments/"
     String templatesIn = "src/naps/templates/"
     String siteOut = "build/naps/site/"
 
@@ -64,8 +63,10 @@ class NapsPlugin implements Plugin<Project> {
                     try {
                         File templateFile = project.file(templateFileLocation)
                         jsonConfig.content = content
-                        jsonConfig.fragments = { String fragmentName ->
-                            return project.file("${project.naps.fragmentsIn}/$fragmentName").text
+                        jsonConfig.templates = { String templateName -> //TODO new code
+                            File innerTemplateFile = project.file("${project.naps.templatesIn}/$templateName")
+                            def innerTemplate = templateEngine.createTemplate(innerTemplateFile).make(jsonConfig)
+                            return innerTemplate.toString()
                         }
                         def template = templateEngine.createTemplate(templateFile).make(jsonConfig)
                         def resultFileName = trimExtension(it.sourcePath) + ".html"
