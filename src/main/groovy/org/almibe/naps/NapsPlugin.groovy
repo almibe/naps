@@ -17,6 +17,8 @@ class NapsPluginExtension {
     String siteOut = "build/naps/site/"
 
     String defaultTemplate = "default.html"
+
+    String asciiDocExtension = "adoc"
 }
 
 class NapsPlugin implements Plugin<Project> {
@@ -36,12 +38,12 @@ class NapsPlugin implements Plugin<Project> {
 
             eachFile {
                 def sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
-                if (it.name.endsWith('.json')) { //exclude .json files if there is a .txt file with it's same name
-                    if (sourceFile.toPath().resolveSibling(it.name + ".txt") != null) {
+                if (it.name.endsWith('.json')) { //exclude .json files if there is an asciidoc file with it's same name
+                    if (sourceFile.toPath().resolveSibling("${it.name}.${project.naps.asciiDocExtension}") != null) {
                         it.exclude()
                     }
                 }
-                if (it.name.endsWith('.txt')) {
+                if (it.name.endsWith(".${project.naps.asciiDocExtension}")) {
                     if (Files.exists(sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".html"))) {
                         throw new RuntimeException("${it.name} and ${trimExtension(it.name) + ".html"} can't both exist in source dir.")
                     }

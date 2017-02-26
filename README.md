@@ -2,16 +2,16 @@
 
 naps is a simple static site generator for Gradle written in Groovy.
 
-### Status
+## Status
 
 Version 0.1.0 is currently in jcenter and is being used to create production websites so it can be used but expect
 changes since this is a young project.
 
-### Example
+## Example
 
 See [naps-test](https://github.com/almibe/naps-test) for an example project.
 
-### Getting Started
+## Getting Started
 
 Assuming that you already have some knowledge of [Gradle](https://www.gradle.org) below is the simplest `build.gradle`
 file for a naps project.
@@ -59,8 +59,12 @@ Under the `/src/naps/` directory you'll notice three directories
   naps fragments will probably go away.  But for now they are useful for things like using the same content across
   multiple templates like a header or footer or sidebar.</dd>
   <dt><code>/templates/</code></dt>
-  <dd>Templates are files that are processed with the `GStringTemplateEngine`.  Each asciidoc file in contents with
+  <dd>Templates are files that are processed with the <code>GStringTemplateEngine</code>.  Each asciidoc file in contents with
   be processed with either default template or the template specified in the matching .json file.  The content of
   the asciidoc is inset in the `$content` variable and all other are set with the content from the .json file.</dd>
 </dl>
 
+When you run `gradle naps` each file in the content directory is examined.  If it's an asciidoc file (by default *.adoc)
+it is process by `asciidoctorj` and the output of that process is inserted into the `${content}` variable of the
+related template file (either the default template or the one specified in the related .json file).  All other files
+(except for related json files) are just copied over without being changed.
