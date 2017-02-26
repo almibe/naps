@@ -63,7 +63,7 @@ class NapsPlugin implements Plugin<Project> {
                     try {
                         File templateFile = project.file(templateFileLocation)
                         jsonConfig.content = content
-                        jsonConfig.templates = { String templateName -> //TODO new code
+                        jsonConfig.templates = { String templateName ->
                             File innerTemplateFile = project.file("${project.naps.templatesIn}/$templateName")
                             def innerTemplate = templateEngine.createTemplate(innerTemplateFile).make(jsonConfig)
                             return innerTemplate.toString()
