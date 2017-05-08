@@ -89,7 +89,7 @@ class NapsPlugin implements Plugin<Project> {
             }
         }
 
-        project.task("startDev") {
+        project.task("startDev", dependsOn: 'naps') {
             doLast {
                 //TODO start static file server and show URL
                 //TODO start monitoring files and represess when they are changed
@@ -111,8 +111,6 @@ class NapsPlugin implements Plugin<Project> {
                 server.setHandler(contexts)
 
                 server.start()
-                System.out.println(server.dump())
-
                 server.join()
             }
         }
