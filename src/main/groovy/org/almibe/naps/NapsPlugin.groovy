@@ -3,6 +3,12 @@ package org.almibe.naps
 import groovy.json.JsonSlurper
 import groovy.text.GStringTemplateEngine
 import org.asciidoctor.Asciidoctor
+import org.eclipse.jetty.server.Server
+import org.eclipse.jetty.server.ServerConnector
+import org.eclipse.jetty.server.handler.ContextHandler
+import org.eclipse.jetty.server.handler.ContextHandlerCollection
+import org.eclipse.jetty.server.handler.ResourceHandler
+import org.eclipse.jetty.util.resource.Resource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -81,6 +87,32 @@ class NapsPlugin implements Plugin<Project> {
                     }
                 }
             }
+        }
+
+        project.task("startDev") {
+            //TODO start static file server and show URL
+            //TODO start monitoring files and represess when they are changed
+            Server server = new Server()
+            ServerConnector connector = new ServerConnector(server)
+            connector.setPort(8090)
+            server.addConnector(connector)
+
+            ResourceHandler resourceHandler = new ResourceHandler();
+
+            ContextHandler contextHandler = new ContextHandler()
+            contextHandler.setContextPath("/")
+            File outputDirectory = project.file(project.naps.siteOut)
+            contextHandler.setBaseResource(Resource.newResource(outputDirectory))
+            contextHandler.setHandler(resourceHandler)
+
+            ContextHandlerCollection contexts = new ContextHandlerCollection()
+            contexts.addHandler(contextHandler)
+            server.setHandler(contexts)
+
+            server.start()
+            System.out.println(server.dump())
+
+            server.join()
         }
     }
 
