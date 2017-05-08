@@ -26,8 +26,7 @@ repositories {
 
 dependencies {
     compile gradleApi()
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
     compile 'org.asciidoctor:asciidoctorj:1.5.4.1'
-    compile 'org.eclipse.jetty:jetty-distribution:9.4.5.v20170502'
+    compile 'org.eclipse.jetty:jetty-server:9.4.5.v20170502'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }

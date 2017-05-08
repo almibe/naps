@@ -90,29 +90,31 @@ class NapsPlugin implements Plugin<Project> {
         }
 
         project.task("startDev") {
-            //TODO start static file server and show URL
-            //TODO start monitoring files and represess when they are changed
-            Server server = new Server()
-            ServerConnector connector = new ServerConnector(server)
-            connector.setPort(8090)
-            server.addConnector(connector)
+            doLast {
+                //TODO start static file server and show URL
+                //TODO start monitoring files and represess when they are changed
+                Server server = new Server()
+                ServerConnector connector = new ServerConnector(server)
+                connector.setPort(8090)
+                server.addConnector(connector)
 
-            ResourceHandler resourceHandler = new ResourceHandler();
+                ResourceHandler resourceHandler = new ResourceHandler();
 
-            ContextHandler contextHandler = new ContextHandler()
-            contextHandler.setContextPath("/")
-            File outputDirectory = project.file(project.naps.siteOut)
-            contextHandler.setBaseResource(Resource.newResource(outputDirectory))
-            contextHandler.setHandler(resourceHandler)
+                ContextHandler contextHandler = new ContextHandler()
+                contextHandler.setContextPath("/")
+                File outputDirectory = project.file(project.naps.siteOut)
+                contextHandler.setBaseResource(Resource.newResource(outputDirectory))
+                contextHandler.setHandler(resourceHandler)
 
-            ContextHandlerCollection contexts = new ContextHandlerCollection()
-            contexts.addHandler(contextHandler)
-            server.setHandler(contexts)
+                ContextHandlerCollection contexts = new ContextHandlerCollection()
+                contexts.addHandler(contextHandler)
+                server.setHandler(contexts)
 
-            server.start()
-            System.out.println(server.dump())
+                server.start()
+                System.out.println(server.dump())
 
-            server.join()
+                server.join()
+            }
         }
     }
 
