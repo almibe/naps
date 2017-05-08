@@ -6,7 +6,6 @@ import org.asciidoctor.Asciidoctor
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.server.ServerConnector
 import org.eclipse.jetty.server.handler.ContextHandler
-import org.eclipse.jetty.server.handler.ContextHandlerCollection
 import org.eclipse.jetty.server.handler.ResourceHandler
 import org.eclipse.jetty.util.resource.Resource
 import org.gradle.api.Plugin
@@ -26,6 +25,8 @@ class NapsPluginExtension {
     String asciiDocExtension = "adoc"
 
     String directoryDefaultsFile = "directory.default.json"
+
+    int devPort = 8090
 }
 
 class NapsPlugin implements Plugin<Project> {
@@ -95,22 +96,21 @@ class NapsPlugin implements Plugin<Project> {
                 //TODO start monitoring files and represess when they are changed
                 Server server = new Server()
                 ServerConnector connector = new ServerConnector(server)
-                connector.setPort(8090)
+                connector.port = project.naps.devPort
                 server.addConnector(connector)
 
                 ResourceHandler resourceHandler = new ResourceHandler();
 
                 ContextHandler contextHandler = new ContextHandler()
-                contextHandler.setContextPath("/")
+                contextHandler.contextPath = "/"
                 File outputDirectory = project.file(project.naps.siteOut)
-                contextHandler.setBaseResource(Resource.newResource(outputDirectory))
-                contextHandler.setHandler(resourceHandler)
+                contextHandler.baseResource = Resource.newResource(outputDirectory)
+                contextHandler.handler = resourceHandler
 
-                ContextHandlerCollection contexts = new ContextHandlerCollection()
-                contexts.addHandler(contextHandler)
-                server.setHandler(contexts)
+                server.setHandler(contextHandler)
 
                 server.start()
+                println("Started http://localhost:${project.naps.devPort}")
                 server.join()
             }
         }
