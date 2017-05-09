@@ -128,7 +128,9 @@ class NapsPlugin implements Plugin<Project> {
                         if (!resultFile.parentFile.exists()) {
                             resultFile.parentFile.mkdirs()
                         }
-                        assert (resultFile.createNewFile() == true)
+                        if (!resultFile.exists()) {
+                            resultFile.createNewFile()
+                        }
                         resultFile.text = template.toString()
                     } catch (Exception ex) {
                         throw new RuntimeException("Error processing template ${templateFileLocation}", ex)
