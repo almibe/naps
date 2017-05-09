@@ -66,8 +66,6 @@ class NapsPlugin implements Plugin<Project> {
                 server.start()
                 println("\n\nStarted http://localhost:${project.naps.devPort}\n\n")
 
-                //TODO in background every 4 seconds walk through content + template dirs and check for recent
-                //TODO   file changes
                 Thread.start {
                     while(server.isRunning()) {
                         copyFiles(project)

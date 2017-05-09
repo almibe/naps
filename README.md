@@ -64,3 +64,11 @@ To create your website run `gradle naps` and each file in the content directory 
 (by default *.adoc) it is process by `asciidoctorj` and the output of that process is inserted into the `${content}`
 variable of the related template file (either the default template or the one specified in the related .json file).
 All other files (except for related json files) are just copied over without being changed.
+
+## Dev Mode
+
+To allow users to view their progress while they work instead of running `gradle naps` users can run `gradle startDev`
+and then open their browser to http://localhost:8090 and view the site they are working on.  On top of running this
+local server (it's an instance of Jetty) a background thread will also watch for changes to files and reprocess them
+as needed.  To kill this mode once started hit ctrl+C in linux (or whatever similar command exists for killing long
+running processes).
