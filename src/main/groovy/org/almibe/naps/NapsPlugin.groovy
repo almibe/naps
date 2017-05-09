@@ -10,7 +10,6 @@ import org.eclipse.jetty.server.handler.ResourceHandler
 import org.eclipse.jetty.util.resource.Resource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -31,21 +30,69 @@ class NapsPluginExtension {
 
 class NapsPlugin implements Plugin<Project> {
 
-    Asciidoctor asciidoctor = Asciidoctor.Factory.create()
-    GStringTemplateEngine templateEngine = new GStringTemplateEngine()
-    JsonSlurper jsonSlurper = new JsonSlurper()
+    final Asciidoctor asciidoctor = Asciidoctor.Factory.create()
+    final GStringTemplateEngine templateEngine = new GStringTemplateEngine()
+    final JsonSlurper jsonSlurper = new JsonSlurper()
+    final Map<String, Long> fileLastProcessed = new HashMap<>()
 
     @Override
     void apply(Project project) {
 
         project.extensions.create("naps", NapsPluginExtension)
 
-        project.task("naps", type:Copy) {
+        project.task("naps") {
+            doLast {
+                copyFiles(project)
+            }
+        }
+
+        project.task("startDev", dependsOn: 'naps') {
+            doLast {
+                final Server server = new Server()
+                final ServerConnector connector = new ServerConnector(server)
+                connector.port = project.naps.devPort
+                server.addConnector(connector)
+
+                final ResourceHandler resourceHandler = new ResourceHandler();
+
+                final ContextHandler contextHandler = new ContextHandler()
+                contextHandler.contextPath = "/"
+                final File outputDirectory = project.file(project.naps.siteOut)
+                contextHandler.baseResource = Resource.newResource(outputDirectory)
+                contextHandler.handler = resourceHandler
+
+                server.setHandler(contextHandler)
+
+                server.start()
+                println("\n\nStarted http://localhost:${project.naps.devPort}\n\n")
+
+                //TODO in background every 4 seconds walk through content + template dirs and check for recent
+                //TODO   file changes
+                Thread.start {
+                    while(server.isRunning()) {
+                        copyFiles(project)
+                        this.sleep(4000)
+                    }
+                }
+                server.join()
+            }
+        }
+    }
+
+    def copyFiles(Project project) {
+        project.copy {
             from "${project.naps.contentsIn}"
             into "${project.naps.siteOut}"
 
             eachFile {
-                def sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
+                final Long timeLastProcessed = fileLastProcessed[it.sourcePath] ?: 0
+                final File sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
+                fileLastProcessed[it.sourcePath] == System.currentTimeMillis()
+
+                if (sourceFile.lastModified() < timeLastProcessed) { //do nothing if file hasn't been updated
+                    it.exclude()
+                }
+
                 if (it.name == project.naps.directoryDefaultsFile) { //exclude directory default config files
                     it.exclude()
                 }
@@ -87,31 +134,6 @@ class NapsPlugin implements Plugin<Project> {
                         throw new RuntimeException("Error processing template ${templateFileLocation}", ex)
                     }
                 }
-            }
-        }
-
-        project.task("startDev", dependsOn: 'naps') {
-            doLast {
-                //TODO start static file server and show URL
-                //TODO start monitoring files and represess when they are changed
-                Server server = new Server()
-                ServerConnector connector = new ServerConnector(server)
-                connector.port = project.naps.devPort
-                server.addConnector(connector)
-
-                ResourceHandler resourceHandler = new ResourceHandler();
-
-                ContextHandler contextHandler = new ContextHandler()
-                contextHandler.contextPath = "/"
-                File outputDirectory = project.file(project.naps.siteOut)
-                contextHandler.baseResource = Resource.newResource(outputDirectory)
-                contextHandler.handler = resourceHandler
-
-                server.setHandler(contextHandler)
-
-                server.start()
-                println("Started http://localhost:${project.naps.devPort}")
-                server.join()
             }
         }
     }
