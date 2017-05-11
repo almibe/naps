@@ -64,8 +64,13 @@ class NapsPlugin implements Plugin<Project> {
 
                 Thread.start {
                     while(server.isRunning()) {
-                        copyFiles(project)
-                        this.sleep(project.naps.devTimeout)
+                        println "${new Date()} - Checking for updates."
+                        try {
+                            copyFiles(project)
+                            this.sleep(project.naps.devTimeout)
+                        } catch (Exception ex) {
+                            ex.printStackTrace()
+                        }
                     }
                 }
                 server.join()
