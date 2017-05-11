@@ -72,28 +72,23 @@ class NapsPlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * loop over all normal files and check status
+     * ignore all template and metadata files
+     * loop over all content files and check if they need redone (check metadata and template files now) -- probably better
+     */
     def copyFiles(Project project) {
         project.copy {
             from "${project.naps.contentsIn}"
             into "${project.naps.siteOut}"
+            exclude "**/${project.naps.directoryDefaultsFile}"
+            exclude "**/*.${project.naps.asciiDocExtension}.json"
 
             eachFile {
                 final Long timeLastProcessed = fileLastProcessed[it.sourcePath] ?: 0
                 final File sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
                 fileLastProcessed[it.sourcePath] = System.currentTimeMillis()
 
-                if (sourceFile.lastModified() < timeLastProcessed) { //do nothing if file hasn't been updated
-                    it.exclude()
-                    return
-                }
-                if (it.name == project.naps.directoryDefaultsFile) { //exclude directory default config files
-                    it.exclude()
-                    return
-                }
-                if (it.name.endsWith(".${project.naps.asciiDocExtension}.json")) { //exclude json files for content files
-                    it.exclude()
-                    return
-                }
                 if (it.name.endsWith(".${project.naps.asciiDocExtension}")) {
                     if (Files.exists(sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".html"))) {
                         throw new RuntimeException("${it.name} and ${trimExtension(it.name) + ".html"} can't both exist in source dir.")
@@ -128,6 +123,10 @@ class NapsPlugin implements Plugin<Project> {
                     } catch (Exception ex) {
                         throw new RuntimeException("Error processing template ${templateFileLocation}", ex)
                     }
+                }
+                else if (sourceFile.lastModified() < timeLastProcessed) { //do nothing if file hasn't been updated
+                    it.exclude()
+                    return
                 }
             }
         }
