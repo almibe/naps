@@ -93,9 +93,14 @@ class NapsPlugin implements Plugin<Project> {
                     if (Files.exists(sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".html"))) {
                         throw new RuntimeException("${it.name} and ${trimExtension(it.name) + ".html"} can't both exist in source dir.")
                     }
+                    //TODO check if this file needs to be processed or not
+                    //TODO   has the file itself changed?
+                    //TODO   has its metadata file changed?
+                    //TODO   has its directory default metadata file changed?
+                    //TODO   has any template changed? (just redoing all files for now when a template changes since templates can nest -- eventually this could be done with more sophistication)
                     it.exclude() //don't export this file but do create it's converted output
-                    Path jsonFile = sourceFile.toPath().resolveSibling(it.name + ".json")
-                    Path directoryConfigFile = sourceFile.toPath().resolveSibling(project.naps.directoryDefaultsFile)
+                    Path jsonFile = sourceFile.toPath().resolveSibling("${it.name}.json")
+                    Path directoryConfigFile = sourceFile.toPath().resolveSibling("${project.naps.directoryDefaultsFile}")
                     def directoryConfig = (Files.exists(directoryConfigFile) ? jsonSlurper.parse(directoryConfigFile.toFile()) : [:])
                     def jsonConfig = directoryConfig + (Files.exists(jsonFile) ? jsonSlurper.parse(jsonFile.toFile()) : [:])
                     def content = asciidoctor.convert(sourceFile.text, [:])
