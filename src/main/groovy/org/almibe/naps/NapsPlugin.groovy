@@ -18,18 +18,13 @@ class NapsPluginExtension {
     String contentsIn = "src/naps/content/"
     String templatesIn = "src/naps/templates/"
     String siteOut = "build/naps/site/"
-
     String defaultTemplate = "default.html"
-
     String asciiDocExtension = "adoc"
-
     String directoryDefaultsFile = "directory.default.json"
-
     int devPort = 8090
 }
 
 class NapsPlugin implements Plugin<Project> {
-
     final Asciidoctor asciidoctor = Asciidoctor.Factory.create()
     final GStringTemplateEngine templateEngine = new GStringTemplateEngine()
     final JsonSlurper jsonSlurper = new JsonSlurper()
@@ -85,19 +80,19 @@ class NapsPlugin implements Plugin<Project> {
             eachFile {
                 final Long timeLastProcessed = fileLastProcessed[it.sourcePath] ?: 0
                 final File sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
-                fileLastProcessed[it.sourcePath] == System.currentTimeMillis()
+                fileLastProcessed[it.sourcePath] = System.currentTimeMillis()
 
                 if (sourceFile.lastModified() < timeLastProcessed) { //do nothing if file hasn't been updated
                     it.exclude()
+                    return
                 }
-
                 if (it.name == project.naps.directoryDefaultsFile) { //exclude directory default config files
                     it.exclude()
+                    return
                 }
-                if (it.name.endsWith('.json')) { //exclude .json files if there is an asciidoc file with it's same name
-                    if (sourceFile.toPath().resolveSibling("${it.name}.${project.naps.asciiDocExtension}") != null) {
-                        it.exclude()
-                    }
+                if (it.name.endsWith(".${project.naps.asciiDocExtension}.json")) { //exclude json files for content files
+                    it.exclude()
+                    return
                 }
                 if (it.name.endsWith(".${project.naps.asciiDocExtension}")) {
                     if (Files.exists(sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".html"))) {
