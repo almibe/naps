@@ -161,12 +161,9 @@ class NapsPlugin implements Plugin<Project> {
     }
 
     boolean templatesUpdatedSince(Project project, long timeMillis) {
-        project.files("$project.naps.templatesIn").forEach { templateFile ->
-            if (templateFile.isFile() && templateFile.lastModified() >= timeMillis) {
-                return true
-            }
+        return project.fileTree("$project.naps.templatesIn").any { templateFile ->
+            return (templateFile.isFile() && templateFile.lastModified() >= timeMillis)
         }
-        return false
     }
 
     String trimExtension(String fileName) {
