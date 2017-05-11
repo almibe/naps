@@ -150,7 +150,7 @@ class NapsPlugin implements Plugin<Project> {
                     it.exclude()
                     return
                 }
-                println "Outputting ${it.sourcePath}"
+                println "${new Date()} - Outputting ${it.sourcePath}"
             }
         }
     }
