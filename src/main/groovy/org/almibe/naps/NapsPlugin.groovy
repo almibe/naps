@@ -22,6 +22,7 @@ class NapsPluginExtension {
     String asciiDocExtension = "adoc"
     String directoryDefaultsFile = "directory.default.json"
     int devPort = 8090
+    long devTimeout = 4000
 }
 
 class NapsPlugin implements Plugin<Project> {
@@ -64,7 +65,7 @@ class NapsPlugin implements Plugin<Project> {
                 Thread.start {
                     while(server.isRunning()) {
                         copyFiles(project)
-                        this.sleep(4000)
+                        this.sleep(project.naps.devTimeout)
                     }
                 }
                 server.join()
@@ -93,14 +94,30 @@ class NapsPlugin implements Plugin<Project> {
                     if (Files.exists(sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".html"))) {
                         throw new RuntimeException("${it.name} and ${trimExtension(it.name) + ".html"} can't both exist in source dir.")
                     }
-                    //TODO check if this file needs to be processed or not
-                    //TODO   has the file itself changed?
-                    //TODO   has its metadata file changed?
-                    //TODO   has its directory default metadata file changed?
-                    //TODO   has any template changed? (just redoing all files for now when a template changes since templates can nest -- eventually this could be done with more sophistication)
-                    it.exclude() //don't export this file but do create it's converted output
+                    it.exclude() //don't export this file but do create it's converted output if needed
+                    //check if this file needs to be processed or not
+                    def updateContent = false
+                    //has the file itself changed?
+                    updateContent = updateContent || (sourceFile.lastModified() >= timeLastProcessed)
+                    //has its metadata file changed?
                     Path jsonFile = sourceFile.toPath().resolveSibling("${it.name}.json")
+                    if (jsonFile.toFile().exists()) {
+                        final Long jsonFileTimeLastProcessed = fileLastProcessed["${it.sourcePath}.json"] ?: 0
+                        fileLastProcessed["${it.sourcePath}.json"] = System.currentTimeMillis()
+                        updateContent = updateContent || (jsonFile.toFile().lastModified() >= jsonFileTimeLastProcessed)
+                    }
+                    //has its directory default metadata file changed?
                     Path directoryConfigFile = sourceFile.toPath().resolveSibling("${project.naps.directoryDefaultsFile}")
+                    if (directoryConfigFile.toFile().exists()) {
+                        final Long directoryConfigFileLastProcess = fileLastProcessed[directoryConfigFile.toFile().absolutePath] ?: 0
+                        fileLastProcessed[directoryConfigFile.toFile().absolutePath] = System.currentTimeMillis()
+                        updateContent = updateContent || (jsonFile.toFile().lastModified() >= directoryConfigFileLastProcess)
+                    }
+                    //has any template changed? (just redoing all files for now when a template changes since templates can nest -- eventually this could be done with more sophistication)
+                    updateContent = updateContent || templatesUpdatedSince(project, timeLastProcessed)
+                    if (!updateContent) {
+                        return
+                    }
                     def directoryConfig = (Files.exists(directoryConfigFile) ? jsonSlurper.parse(directoryConfigFile.toFile()) : [:])
                     def jsonConfig = directoryConfig + (Files.exists(jsonFile) ? jsonSlurper.parse(jsonFile.toFile()) : [:])
                     def content = asciidoctor.convert(sourceFile.text, [:])
@@ -133,8 +150,18 @@ class NapsPlugin implements Plugin<Project> {
                     it.exclude()
                     return
                 }
+                println "Outputting ${it.sourcePath}"
             }
         }
+    }
+
+    boolean templatesUpdatedSince(Project project, long timeMillis) {
+        project.files("$project.naps.templatesIn").forEach { templateFile ->
+            if (templateFile.isFile() && templateFile.lastModified() >= timeMillis) {
+                return true
+            }
+        }
+        return false
     }
 
     String trimExtension(String fileName) {
