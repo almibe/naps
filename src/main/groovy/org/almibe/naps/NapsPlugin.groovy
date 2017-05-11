@@ -94,7 +94,7 @@ class NapsPlugin implements Plugin<Project> {
                         throw new RuntimeException("${it.name} and ${trimExtension(it.name) + ".html"} can't both exist in source dir.")
                     }
                     it.exclude() //don't export this file but do create it's converted output
-                    Path jsonFile = sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".json")
+                    Path jsonFile = sourceFile.toPath().resolveSibling(it.name + ".json")
                     Path directoryConfigFile = sourceFile.toPath().resolveSibling(project.naps.directoryDefaultsFile)
                     def directoryConfig = (Files.exists(directoryConfigFile) ? jsonSlurper.parse(directoryConfigFile.toFile()) : [:])
                     def jsonConfig = directoryConfig + (Files.exists(jsonFile) ? jsonSlurper.parse(jsonFile.toFile()) : [:])
