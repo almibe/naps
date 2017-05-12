@@ -22,7 +22,7 @@ class NapsPluginExtension {
     String asciiDocExtension = "adoc"
     String directoryDefaultsFile = "directory.default.json"
     int devPort = 8090
-    long devTimeout = 4000
+    long devTimeout = 1000
 }
 
 class NapsPlugin implements Plugin<Project> {
@@ -93,7 +93,6 @@ class NapsPlugin implements Plugin<Project> {
             eachFile {
                 final Long timeLastProcessed = fileLastProcessed[it.sourcePath] ?: 0
                 final File sourceFile = project.file("${project.naps.contentsIn}${it.sourcePath}")
-                fileLastProcessed[it.sourcePath] = System.currentTimeMillis()
 
                 if (it.name.endsWith(".${project.naps.asciiDocExtension}")) {
                     if (Files.exists(sourceFile.toPath().resolveSibling(trimExtension(it.name) + ".html"))) {
@@ -108,15 +107,21 @@ class NapsPlugin implements Plugin<Project> {
                     Path jsonFile = sourceFile.toPath().resolveSibling("${it.name}.json")
                     if (jsonFile.toFile().exists()) {
                         final Long jsonFileTimeLastProcessed = fileLastProcessed["${it.sourcePath}.json"] ?: 0
-                        fileLastProcessed["${it.sourcePath}.json"] = System.currentTimeMillis()
-                        updateContent = updateContent || (jsonFile.toFile().lastModified() >= jsonFileTimeLastProcessed)
+                        def jsonFileUpdated = jsonFile.toFile().lastModified() >= jsonFileTimeLastProcessed
+                        updateContent = updateContent || jsonFileUpdated
+                        if (jsonFileUpdated) {
+                            fileLastProcessed["${it.sourcePath}.json"] = System.currentTimeMillis()
+                        }
                     }
                     //has its directory default metadata file changed?
                     Path directoryConfigFile = sourceFile.toPath().resolveSibling("${project.naps.directoryDefaultsFile}")
                     if (directoryConfigFile.toFile().exists()) {
                         final Long directoryConfigFileLastProcess = fileLastProcessed[directoryConfigFile.toFile().absolutePath] ?: 0
-                        fileLastProcessed[directoryConfigFile.toFile().absolutePath] = System.currentTimeMillis()
-                        updateContent = updateContent || (jsonFile.toFile().lastModified() >= directoryConfigFileLastProcess)
+                        def directoryConfigUpdated = jsonFile.toFile().lastModified() >= directoryConfigFileLastProcess
+                        updateContent = updateContent || directoryConfigUpdated
+                        if (directoryConfigUpdated) {
+                            fileLastProcessed[directoryConfigFile.toFile().absolutePath] = System.currentTimeMillis()
+                        }
                     }
                     //has any template changed? (just redoing all files for now when a template changes since templates can nest -- eventually this could be done with more sophistication)
                     updateContent = updateContent || templatesUpdatedSince(project, timeLastProcessed)
@@ -147,6 +152,7 @@ class NapsPlugin implements Plugin<Project> {
                             resultFile.createNewFile()
                         }
                         resultFile.text = template.toString()
+                        fileLastProcessed[it.sourcePath] = System.currentTimeMillis()
                     } catch (Exception ex) {
                         throw new RuntimeException("Error processing template ${templateFileLocation}", ex)
                     }
