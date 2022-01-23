@@ -1,0 +1,36 @@
+{
+  "name": "ligature.dev",
+  "version": "0.1.0-SNAPSHOT",
+  "description": "Ligature's website.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/almibe/ligature.dev.git"
+  },
+  "author": "Alex Michael Berry <alexmiberry@gmail.com>",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/almibe/ligature.dev/issues"
+  },
+  "homepage": "https://github.com/almibe/ligature.dev#readme",
+  "private": true,
+  "scripts": {
+    "buildSite": "npx ts-node site.ts",
+    "bundle": "vite build ./temp/ --outDir=../dist",
+    "vitePreview": "vite preview",
+    "build": "run-s buildSite bundle",
+    "preview": "run-s buildSite bundle vitePreview"
+  },
+  "dependencies": {
+    "blueprint-css": "^3.0.0-beta.0"
+  },
+  "devDependencies": {
+    "ejs": "^3.1.6",
+    "fs-extra": "^10.0.0",
+    "marked": "^4.0.10",
+    "npm-run-all": "^4.1.5",
+    "snowpack": "^3.8.8",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4",
+    "vite": "^2.7.13"
+  }
+}
